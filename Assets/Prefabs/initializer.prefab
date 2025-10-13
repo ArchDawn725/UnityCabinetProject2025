@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 2885168016144972956}
   - component: {fileID: 20531161541555394}
   - component: {fileID: 8582130298554994474}
+  - component: {fileID: 3803658512664324245}
   m_Layer: 0
   m_Name: initializer
   m_TagString: Untagged
@@ -45,6 +46,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 78de462a25aa16349b92c697e9d276ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  _loadProgressPrefab: {fileID: 5392773570647992130, guid: a2dd01737cbd61b4fbc70dff63243f51, type: 3}
+  _mainCameraPrefab: {fileID: 5533422795221196702, guid: f37dc4ca18e2e0e44ad831b423895d9a, type: 3}
+  _eventSystem: {fileID: 8812133035819676853, guid: c99b6ee6193f70843ac46d4e119b5012, type: 3}
+  _stepPrefabs:
+  - {fileID: 2019840321157358111, guid: 1a9153ce9bf0498428ae209d190d2554, type: 3}
 --- !u!114 &8582130298554994474
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -57,3 +63,52 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ed83459511fbef4d82e1fe7c2bad72d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  _loadProgressPrefab: {fileID: 5392773570647992130, guid: a2dd01737cbd61b4fbc70dff63243f51, type: 3}
+  _directionalLightPrefab: {fileID: 1941979665314575266, guid: 855fedef1a83fdf44aecca69b8824df6, type: 3}
+  _playerPrefab: {fileID: 7010643900752633444, guid: 4715e1e428ed0d9449f1fb606924ca76, type: 3}
+  _stepPrefabs:
+  - {fileID: 1870971083582474243, guid: b0b41bbfc3ed1a14481a7d1f37e738d7, type: 3}
+--- !u!114 &3803658512664324245
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6353733604040081456}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 621567455fd1c4ceb811cc8a00b6a1a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.InputSystem::UnityEngine.InputSystem.PlayerInputManager
+  m_NotificationBehavior: 0
+  m_MaxPlayerCount: 3
+  m_AllowJoining: 0
+  m_JoinBehavior: 2
+  m_PlayerJoinedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_PlayerLeftEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_JoinAction:
+    m_UseReference: 0
+    m_Action:
+      m_Name: 
+      m_Type: 0
+      m_ExpectedControlType: 
+      m_Id: ce477c51-49f8-4f41-974e-e85e0b734651
+      m_Processors: 
+      m_Interactions: 
+      m_SingletonActionBindings: []
+      m_Flags: 0
+    m_Reference: {fileID: 0}
+  m_PlayerPrefab: {fileID: 7010643900752633444, guid: 4715e1e428ed0d9449f1fb606924ca76, type: 3}
+  m_SplitScreen: 0
+  m_MaintainAspectRatioInSplitScreen: 0
+  m_FixedNumberOfSplitScreens: -1
+  m_SplitScreenRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
