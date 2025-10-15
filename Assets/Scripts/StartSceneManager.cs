@@ -21,7 +21,7 @@ public sealed class StartSceneManager : MonoBehaviour, IAsyncStep
     /// Preferred async setup entry point (matches updated IAsyncStep).
     /// Hides the UI until StartInitializer signals Ready, then shows it.
     /// </summary>
-    public async Task SetupAsync(CancellationToken cancellationToken = default)
+    public async Task SetupAsync(CancellationToken cancellationToken = default, Initializer initializer = null)
     {
         if (_initialized) return;
         _initialized = true;
@@ -52,6 +52,7 @@ public sealed class StartSceneManager : MonoBehaviour, IAsyncStep
         {
             await Awaitable.NextFrameAsync(cancellationToken);
         }
+
     }
 
     /// <summary>
