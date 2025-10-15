@@ -38,6 +38,9 @@ public sealed class PlayerMovement : MonoBehaviour, IAsyncStep
     private bool _initialized;
     private Transform _cachedCam;
 
+    public float GetMoveSpeed() => _moveSpeed;
+    public void SetMoveSpeed(float v) => _moveSpeed = Mathf.Max(0f, v);
+
     private void Awake()
     {
         _rb = GetComponent<Rigidbody>();
@@ -56,6 +59,13 @@ public sealed class PlayerMovement : MonoBehaviour, IAsyncStep
 
         // Cache camera if provided; otherwise we’ll try Camera.main at runtime
         _cachedCam = _cameraTransform != null ? _cameraTransform : Camera.main?.transform;
+
+        StartScreenTest.Singleton?.players.Add(this);
+    }
+
+    public async Task SetupAsync(CancellationToken ct, Initializer initializer)
+    {
+
     }
 
     /// <summary>
@@ -83,6 +93,26 @@ public sealed class PlayerMovement : MonoBehaviour, IAsyncStep
         // give one frame for other systems to wire up
         if (!ct.IsCancellationRequested)
             await Awaitable.NextFrameAsync(ct);
+    }
+
+    public void Setup()
+    {
+        if (_initialized) return;
+        _initialized = true;
+
+        // Don’t let physics kick in until the world is ready
+        _rb.isKinematic = true;
+        movementEnabled = false;
+
+        if (GameInitializer.singleton != null)
+        {
+            GameInitializer.singleton.Ready += HandleReady;
+        }
+        else
+        {
+            // If there’s no GameInitializer, enable immediately so this works in isolation.
+            EnableMovementNow();
+        }
     }
 
     private void HandleReady()
@@ -201,4 +231,6 @@ public sealed class PlayerMovement : MonoBehaviour, IAsyncStep
         Gizmos.DrawLine(origin, origin + Vector3.down * _groundCheckDistance);
     }
 #endif
+
+
 }

@@ -11,5 +11,5 @@ public interface IAsyncStep
     /// Performs any asynchronous setup/initialization required by this step.
     /// </summary>
     /// <param name="cancellationToken">A token to observe while waiting for the operation to complete.</param>
-    Task SetupAsync(CancellationToken cancellationToken = default);
+    Task SetupAsync(CancellationToken cancellationToken = default, Initializer initializer = null);
 }

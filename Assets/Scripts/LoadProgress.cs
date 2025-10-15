@@ -1,10 +1,12 @@
 ﻿using System.Collections;
+using System.Threading;
+using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 [DisallowMultipleComponent]
-public class LoadProgress : MonoBehaviour
+public class LoadProgress : MonoBehaviour, IAsyncStep
 {
     [Header("References")]
     [SerializeField] private Slider _progressBar;
@@ -19,10 +21,6 @@ public class LoadProgress : MonoBehaviour
     [Tooltip("If true, progress never moves backwards.")]
     [SerializeField] private bool _onlyIncrease = true;
     [SerializeField, Min(0f)] private float _fadeDuration = 0.2f;
-
-    [Header("Behavior")]
-    [Tooltip("If true, Show() is called in Awake.")]
-    [SerializeField] private bool _autoShowOnAwake = true;
 
     private Coroutine _progressCo;
     private Coroutine _fadeCo;
@@ -41,7 +39,7 @@ public class LoadProgress : MonoBehaviour
         _percentLabel = GetComponentInChildren<TextMeshProUGUI>(true);
     }
 
-    private void Awake()
+    public async Task SetupAsync(CancellationToken ct, Initializer initializer)
     {
         EnsureRefs();
 
@@ -55,11 +53,7 @@ public class LoadProgress : MonoBehaviour
         _progressBar.value = 0f;
         UpdateLabel(0f);
 
-        if (_autoShowOnAwake)
-        {
-            Show(animated: true);
-        }
-        // If you want it hidden by default, set _autoShowOnAwake = false in the inspector.
+        Show(animated: true);
     }
 
     private void EnsureRefs()

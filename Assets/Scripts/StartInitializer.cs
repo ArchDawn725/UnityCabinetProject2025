@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.UI;
 
 public sealed class StartInitializer : MonoBehaviour
 {
@@ -11,7 +12,7 @@ public sealed class StartInitializer : MonoBehaviour
     [Header("Basics")]
     [SerializeField] private LoadProgress _loadProgressPrefab;
     [SerializeField] private Camera _mainCameraPrefab;
-    [SerializeField] private EventSystem _eventSystem; // prefab or scene ref
+    [SerializeField] private MultiplayerEventSystem _eventSystem;
 
     [Header("Steps (Prefabs)")]
     [Tooltip("Each element is a prefab whose root has a component implementing IAsyncStep.")]

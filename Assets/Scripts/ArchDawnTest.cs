@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ArchDawnTest : MonoBehaviour, IAsyncStep
 {
-    public async Task SetupAsync(CancellationToken ct)
+    public async Task SetupAsync(CancellationToken ct, Initializer initializer)
     {
         // Do your async work here: loading, addressables, auth, etc.
 
