@@ -44,7 +44,7 @@ GameObject:
   - component: {fileID: 5294066557326409351}
   - component: {fileID: 1548801375997359897}
   m_Layer: 0
-  m_Name: Cube (2)
+  m_Name: Wall_South
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -58,12 +58,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1230943014810467384}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 4, z: -52}
   m_LocalScale: {x: 4, y: 10, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8827749460786823982}
+  m_Father: {fileID: 569656547761692617}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!33 &8029219879855817305
 MeshFilter:
@@ -185,7 +185,7 @@ GameObject:
   - component: {fileID: 236048958688145796}
   - component: {fileID: 1549576868238367282}
   m_Layer: 0
-  m_Name: Cube (6)
+  m_Name: Sidewalk_West
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -274,7 +274,7 @@ GameObject:
   - component: {fileID: 7276825968750427949}
   - component: {fileID: 3954713893456779012}
   m_Layer: 0
-  m_Name: Cube (4)
+  m_Name: Road_RightShoulder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -683,14 +683,9 @@ Transform:
   - {fileID: 2082559962525110200}
   - {fileID: 5654457525097444148}
   - {fileID: 2610417871884287972}
-  - {fileID: 4857780005415117603}
   - {fileID: 2324055454483924606}
   - {fileID: 5041752084766085146}
-  - {fileID: 1366950507302248343}
-  - {fileID: 4742848497725470256}
-  - {fileID: 6568251989262670398}
-  - {fileID: 75470709684032178}
-  - {fileID: 1963790179242700816}
+  - {fileID: 569656547761692617}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4194598052702042216
@@ -767,7 +762,7 @@ GameObject:
   - component: {fileID: 2801488036749641239}
   - component: {fileID: 1144790095180145869}
   m_Layer: 0
-  m_Name: Cube (5)
+  m_Name: Sidewalk_East
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -857,7 +852,7 @@ GameObject:
   - component: {fileID: 4350272875225022682}
   - component: {fileID: 4978450874748978314}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: Wall_East
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -871,12 +866,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4767650309853599747}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 52, y: 4, z: 0}
   m_LocalScale: {x: 4, y: 10, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8827749460786823982}
+  m_Father: {fileID: 569656547761692617}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &7473501501443743793
 MeshFilter:
@@ -967,7 +962,7 @@ GameObject:
   - component: {fileID: 4361024896612749479}
   - component: {fileID: 7139106545074701630}
   m_Layer: 0
-  m_Name: Cube (3)
+  m_Name: Road_LeftShoulder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1127,7 +1122,7 @@ GameObject:
   - component: {fileID: 4900325322233873818}
   - component: {fileID: 5924021829442181321}
   m_Layer: 0
-  m_Name: Cube (3)
+  m_Name: Wall_North
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1141,12 +1136,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5219040532357029178}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 4, z: 52}
   m_LocalScale: {x: 4, y: 10, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8827749460786823982}
+  m_Father: {fileID: 569656547761692617}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!33 &5724038018481582810
 MeshFilter:
@@ -1301,7 +1296,7 @@ GameObject:
   - component: {fileID: 1352060406101766791}
   - component: {fileID: 5862787395165267836}
   m_Layer: 0
-  m_Name: Cube
+  m_Name: Road_YellowLine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1422,7 +1417,7 @@ GameObject:
   - component: {fileID: 5183582680281807936}
   - component: {fileID: 4989362681929833933}
   m_Layer: 0
-  m_Name: Cube (1)
+  m_Name: Wall_West
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1436,12 +1431,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6272800428307412010}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -52, y: 4, z: 0}
   m_LocalScale: {x: 4, y: 10, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8827749460786823982}
+  m_Father: {fileID: 569656547761692617}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &5074497686370815745
 MeshFilter:
@@ -1643,7 +1638,7 @@ GameObject:
   - component: {fileID: 6683199664090460776}
   - component: {fileID: 3466153963221682867}
   m_Layer: 0
-  m_Name: Cube (1)
+  m_Name: Road_RightLane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1763,7 +1758,7 @@ GameObject:
   - component: {fileID: 5058602782693111314}
   - component: {fileID: 5534981001136142546}
   m_Layer: 0
-  m_Name: Cube (2)
+  m_Name: Road_LeftLane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1898,12 +1893,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7976083858282208344}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: -1, z: 0}
   m_LocalScale: {x: 10, y: 1, z: 10}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8827749460786823982}
+  m_Father: {fileID: 569656547761692617}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &605877048237116734
 MeshFilter:
@@ -1983,6 +1978,43 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &8186946224523383180
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 569656547761692617}
+  m_Layer: 0
+  m_Name: LevelGeometry
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &569656547761692617
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8186946224523383180}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 4857780005415117603}
+  - {fileID: 1366950507302248343}
+  - {fileID: 4742848497725470256}
+  - {fileID: 6568251989262670398}
+  - {fileID: 75470709684032178}
+  - {fileID: 1963790179242700816}
+  m_Father: {fileID: 8827749460786823982}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8775851660876276872
 GameObject:
   m_ObjectHideFlags: 0
@@ -2124,7 +2156,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9063768392479819275}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalRotation: {x: -0, y: 0.7071068, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: -0.9, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -2136,5 +2168,5 @@ Transform:
   - {fileID: 2342784314459176240}
   - {fileID: 5900515755774876126}
   - {fileID: 836623010224908995}
-  m_Father: {fileID: 8827749460786823982}
+  m_Father: {fileID: 569656547761692617}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
