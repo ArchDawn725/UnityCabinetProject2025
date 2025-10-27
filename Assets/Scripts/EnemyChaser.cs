@@ -167,4 +167,9 @@ public class EnemyChaser : MonoBehaviour
         Gizmos.DrawWireSphere(transform.position, attackRange);
     }
 #endif
+
+    public void SetSpeed(float newSpeed)
+    {
+        moveSpeed = newSpeed;
+    }
 }

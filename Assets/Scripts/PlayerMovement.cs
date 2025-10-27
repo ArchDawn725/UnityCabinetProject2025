@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(PlayerInput))]
 [DisallowMultipleComponent]
-public sealed class PlayerMovement : MonoBehaviour, IAsyncStep
+public sealed class PlayerMovement : MonoBehaviour
 {
     [Header("Movement")]
     [SerializeField, Min(0f)] private float _moveSpeed = 6f;     // target speed (X/Y)
@@ -46,11 +46,6 @@ public sealed class PlayerMovement : MonoBehaviour, IAsyncStep
         StartScreenTest.Singleton?.players.Add(this);
     }
 
-    public async Task SetupAsync(CancellationToken ct, Initializer initializer)
-    {
-        // kept for API parity; no-op
-    }
-
     /// <summary>Prepare the component. Subscribes to game ready, disables physics until then.</summary>
     public async Task SetupAsync(CancellationToken ct)
     {
@@ -60,8 +55,8 @@ public sealed class PlayerMovement : MonoBehaviour, IAsyncStep
         _rb.bodyType = RigidbodyType2D.Kinematic; // hold until world ready
         movementEnabled = false;
 
-        if (GameInitializer.singleton != null)
-            GameInitializer.singleton.Ready += HandleReady;
+        if (Initializer.singleton != null)
+            Initializer.singleton.Ready += HandleReady;
         else
             EnableMovementNow();
 
@@ -77,8 +72,8 @@ public sealed class PlayerMovement : MonoBehaviour, IAsyncStep
         _rb.bodyType = RigidbodyType2D.Kinematic;
         movementEnabled = false;
 
-        if (GameInitializer.singleton != null)
-            GameInitializer.singleton.Ready += HandleReady;
+        if (Initializer.singleton != null)
+            Initializer.singleton.Ready += HandleReady;
         else
             EnableMovementNow();
     }
@@ -86,8 +81,8 @@ public sealed class PlayerMovement : MonoBehaviour, IAsyncStep
     private void HandleReady()
     {
         EnableMovementNow();
-        if (GameInitializer.singleton != null)
-            GameInitializer.singleton.Ready -= HandleReady;
+        if (Initializer.singleton != null)
+            Initializer.singleton.Ready -= HandleReady;
     }
 
     private void EnableMovementNow()
@@ -114,8 +109,8 @@ public sealed class PlayerMovement : MonoBehaviour, IAsyncStep
             _moveAction.canceled -= OnMove;
         }
 
-        if (GameInitializer.singleton != null)
-            GameInitializer.singleton.Ready -= HandleReady;
+        if (Initializer.singleton != null)
+            Initializer.singleton.Ready -= HandleReady;
     }
 
     private void OnMove(InputAction.CallbackContext ctx)

@@ -245,7 +245,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0670d751fa18ed24cab3b05003a0d170, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
-  maxHp: 100
+  maxHp: 5
   hp: 0
   healthBar: {fileID: 4441254758411807859}
   aimAnchor: {fileID: 0}

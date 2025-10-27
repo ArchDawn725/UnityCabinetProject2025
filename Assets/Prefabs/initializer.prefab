@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7651360229449404543}
   - component: {fileID: 9094586431404230450}
   m_Layer: 0
-  m_Name: Initializer
+  m_Name: initializer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -46,5 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Initializer
   _loadProgressPrefab: {fileID: 5392773570647992130, guid: a2dd01737cbd61b4fbc70dff63243f51, type: 3}
   _stepPrefabs:
+  - {fileID: 283581125302774426, guid: 03e452ff4659ab449a32743a50aef42a, type: 3}
+  - {fileID: 5955671517225430975, guid: 5036bf3c62e3f434ba68063ce8e4a8dd, type: 3}
+  - {fileID: 3372383603387262100, guid: b7b709a1bfaa78847bd762d1be311784, type: 3}
   - {fileID: 6972373958159022051, guid: 6d563ea835646dc49bc3526058527b16, type: 3}
-  - {fileID: 3588925065758692542, guid: f39d00432b3052d4681e812d3b26820a, type: 3}

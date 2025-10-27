@@ -6,7 +6,7 @@ using UnityEngine;
 /// </summary>
 [RequireComponent(typeof(Collider2D))]
 [RequireComponent(typeof(Rigidbody2D))]
-public class Projectile : MonoBehaviour
+public class Projectile : PooledBehaviour
 {
     float _speed;
     float _damage;
@@ -46,14 +46,21 @@ public class Projectile : MonoBehaviour
         col.isTrigger = true;
     }
 
+    public override void OnSpawn()
+    {
+        if (_rb) { _rb.linearVelocity = Vector2.zero; _rb.angularVelocity = 0; }
+    }
+
     void FixedUpdate()
     {
+        if (!gameObject.activeInHierarchy) return;
+
         // move forward (XY only; Z is unchanged)
         _rb.MovePosition(_rb.position + _dir * _speed * Time.fixedDeltaTime);
 
         // lifetime
         _lifeRemaining -= Time.fixedDeltaTime;
-        if (_lifeRemaining <= 0f) Destroy(gameObject);
+        if (_lifeRemaining <= 0f) Despawn();
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -61,13 +68,13 @@ public class Projectile : MonoBehaviour
         if (!other || !_MatchesEnemy(other)) return;
 
         // Try to find a Hit(damage) receiver on the collider, its rigidbody, or parent
-        if (TryHit(other.gameObject)) { Destroy(gameObject); return; }
+        if (TryHit(other.gameObject)) { Despawn(); return; }
 
         if (other.attachedRigidbody && TryHit(other.attachedRigidbody.gameObject))
-        { Destroy(gameObject); return; }
+        { Despawn(); return; }
 
         if (other.transform.parent && TryHit(other.transform.parent.gameObject))
-        { Destroy(gameObject); return; }
+        { Despawn(); return; }
     }
 
     bool _MatchesEnemy(Collider2D other) =>

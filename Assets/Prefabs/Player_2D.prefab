@@ -204,7 +204,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   _moveSpeed: 6
   _acceleration: 30
-  movementEnabled: 1
+  movementEnabled: 0
   _faceMoveDirection: 1
   _rotateSpeedDegPerSec: 720
   _facingAngleOffset: 0

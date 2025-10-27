@@ -22,6 +22,10 @@ public class Initializer : MonoBehaviour
     private bool _initialized;
     public event Action Play;
 
+    public static Initializer singleton;
+
+    private void Awake() { singleton = this; }
+
     #endregion
 
     #region Construction

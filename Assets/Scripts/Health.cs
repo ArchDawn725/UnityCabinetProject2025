@@ -24,6 +24,8 @@ public class Health : MonoBehaviour
         Changed?.Invoke(hp, maxHp); // initialize UI on spawn/enable
     }
 
+    [ContextMenu("Force Hit")]
+    private void ForceHit() { Hit(10f); }
     public void Hit(float damage)
     {
         if (damage <= 0f) return;
@@ -51,12 +53,21 @@ public class Health : MonoBehaviour
         healthBar.localScale = new Vector3(hp / maxHp, healthBar.localScale.y, healthBar.localScale.z);
     }
 
+    public void SetMaxHp(float val)
+    {
+        maxHp = val;
+        hp = maxHp;
+        hp = Mathf.Min(hp, maxHp);
+        Changed?.Invoke(hp, maxHp); // <-- updates bar on level-up
+        healthBar.localScale = new Vector3(hp / maxHp, healthBar.localScale.y, healthBar.localScale.z);
+    }
+
     public float Current => hp;
     public float Max => maxHp;
 
     void Die()
     {
         Died?.Invoke();
-        Destroy(gameObject); // if you destroy on death
+        //Destroy(gameObject); // if you destroy on death
     }
 }

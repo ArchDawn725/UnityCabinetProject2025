@@ -1,12 +1,18 @@
+using System.Threading;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.Pool;
 
 [RequireComponent(typeof(Health))]
-public class Enemy : MonoBehaviour
+public class Enemy : PooledBehaviour
 {
     // Hook up references that upgrades will modify
-    private NavMeshAgent _mover;     // your movement script
+    private EnemyChaser _mover;     // your movement script
     private Health _health;                       // your generic health
+
+    IObjectPool<Enemy> _pool;
+    public void SetPool(IObjectPool<Enemy> pool) => _pool = pool;
 
     void Awake() => _health = GetComponent<Health>();
 
@@ -16,15 +22,27 @@ public class Enemy : MonoBehaviour
     void OnDied()
     {
         if (XpLevelSystem.Instance) XpLevelSystem.Instance.AwardEnemyKill();
-        Destroy(gameObject);
-        // other death logic (loot, VFX)...
+        Despawn();
     }
-    public void SetPoints(float points)
+    public override void OnSpawn()
     {
-        _mover = GetComponent<NavMeshAgent>();
+        //if (rb) { rb.velocity = Vector2.zero; rb.angularVelocity = 0f; }
+        //if (hp) hp.ResetHP();
+        //if (ai) ai.enabled = true;
+    }
+    public override void OnDespawn()
+    {
+        //if (ai) ai.enabled = false;
+        // stop coroutines, clear status effects, ai, etc.
+    }
+    public void ApplyDefinition(EnemySO so, int difficulty)
+    {
+        _mover = GetComponent<EnemyChaser>();
         _health = GetComponent<Health>();
 
-        //_mover.speed *= 1f + points * 0.01f;
-        _health.AddMaxHp(_health.Max * (1f + points * 0.01f));
+        _health.SetMaxHp(so.maxHealth * (1f + difficulty * 0.01f));
+        _mover.SetSpeed(so.moveSpeed * (1f + difficulty * 0.01f));
+
+        // visuals, ai, etc.
     }
 }

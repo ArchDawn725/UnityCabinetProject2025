@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEditor.EditorTools;
 using UnityEngine;
 
 [RequireComponent(typeof(CircleCollider2D))]
@@ -25,6 +26,7 @@ public class ProjectileShooter : MonoBehaviour
     float _nextShotTime;
 
     const float EPS = 0.001f;
+    private PoolManager poolManager;
 
     void Awake()
     {
@@ -41,6 +43,15 @@ public class ProjectileShooter : MonoBehaviour
             Debug.LogWarning($"{name}: projectilePrefab not assigned.", this);
 
         _nextShotTime = 0f; // allow an immediate shot
+    }
+
+    private void Start()
+    {
+        poolManager = FindAnyObjectByType<PoolManager>();
+        if (!poolManager)
+        {
+            Debug.LogError($"{name}: PoolManager not found in scene.", this);
+        }
     }
 
     void Update()
@@ -99,11 +110,13 @@ public class ProjectileShooter : MonoBehaviour
         float angle = Mathf.Atan2(dir2.y, dir2.x) * Mathf.Rad2Deg;
         Quaternion rot = Quaternion.Euler(0f, 0f, angle);
 
-        var proj = Instantiate(projectilePrefab, origin, rot);
+        //var proj = Instantiate(projectilePrefab, origin, rot);
+        var p = poolManager.Spawn(projectilePrefab, muzzle.position, rot);
 
         // Pass a 3D vector with z=0 to keep your existing Projectile.Init signature
         Vector3 dir3 = new Vector3(dir2.x, dir2.y, 0f);
-        proj.Init(dir3, projectileSpeed, projectileDamage, projectileLifetime, enemyTag);
+        //proj.Init(dir3, projectileSpeed, projectileDamage, projectileLifetime, enemyTag);
+        p.Init(dir3, projectileSpeed, projectileDamage, projectileLifetime, enemyTag);
     }
 
     [SerializeField, Range(0f, 1f)] private float fallbackChestHeight = 0.65f;
