@@ -1,43 +1,54 @@
 using UnityEngine;
 
 /// <summary>
-/// Simple straight projectile. Moves along a fixed direction, 
+/// Simple straight projectile (2D). Moves along a fixed direction on XY,
 /// calls Hit(damage) on enemies it triggers with, then destroys itself.
 /// </summary>
-[RequireComponent(typeof(Collider))]
-[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Collider2D))]
+[RequireComponent(typeof(Rigidbody2D))]
 public class Projectile : MonoBehaviour
 {
     float _speed;
     float _damage;
     float _lifeRemaining;
     string _enemyTag;
-    Rigidbody _rb;
-    Vector3 _dir;
 
+    Rigidbody2D _rb;
+    Vector2 _dir; // XY direction
+
+    // Keep the original API; Z is ignored in 2D.
     public void Init(Vector3 direction, float speed, float damage, float lifetime, string enemyTag)
     {
-        _dir = direction.normalized;
+        _dir = new Vector2(direction.x, direction.y).normalized;
         _speed = Mathf.Max(0f, speed);
         _damage = Mathf.Max(0f, damage);
         _lifeRemaining = Mathf.Max(0.01f, lifetime);
         _enemyTag = enemyTag;
 
-        if (!_rb) _rb = GetComponent<Rigidbody>();
-        _rb.isKinematic = true; // moving via MovePosition (trigger collisions)
+        if (!_rb) _rb = GetComponent<Rigidbody2D>();
+        _rb.bodyType = RigidbodyType2D.Kinematic; // MovePosition for trigger collisions
+        _rb.gravityScale = 0f;
+        _rb.interpolation = RigidbodyInterpolation2D.Interpolate;
     }
+
+    // Optional convenience overload for pure 2D callers.
+    public void Init(Vector2 direction, float speed, float damage, float lifetime, string enemyTag) =>
+        Init(new Vector3(direction.x, direction.y, 0f), speed, damage, lifetime, enemyTag);
 
     void Awake()
     {
-        _rb = GetComponent<Rigidbody>();
-        _rb.isKinematic = true;
-        var col = GetComponent<Collider>();
+        _rb = GetComponent<Rigidbody2D>();
+        _rb.bodyType = RigidbodyType2D.Kinematic;
+        _rb.gravityScale = 0f;
+        _rb.interpolation = RigidbodyInterpolation2D.Interpolate;
+
+        var col = GetComponent<Collider2D>();
         col.isTrigger = true;
     }
 
     void FixedUpdate()
     {
-        // move forward
+        // move forward (XY only; Z is unchanged)
         _rb.MovePosition(_rb.position + _dir * _speed * Time.fixedDeltaTime);
 
         // lifetime
@@ -45,25 +56,27 @@ public class Projectile : MonoBehaviour
         if (_lifeRemaining <= 0f) Destroy(gameObject);
     }
 
-    void OnTriggerEnter(Collider other)
+    void OnTriggerEnter2D(Collider2D other)
     {
         if (!other || !_MatchesEnemy(other)) return;
 
         // Try to find a Hit(damage) receiver on the collider, its rigidbody, or parent
         if (TryHit(other.gameObject)) { Destroy(gameObject); return; }
-        if (other.attachedRigidbody && TryHit(other.attachedRigidbody.gameObject)) { Destroy(gameObject); return; }
-        if (other.transform.parent && TryHit(other.transform.parent.gameObject)) { Destroy(gameObject); return; }
+
+        if (other.attachedRigidbody && TryHit(other.attachedRigidbody.gameObject))
+        { Destroy(gameObject); return; }
+
+        if (other.transform.parent && TryHit(other.transform.parent.gameObject))
+        { Destroy(gameObject); return; }
     }
 
-    bool _MatchesEnemy(Collider other) =>
+    bool _MatchesEnemy(Collider2D other) =>
         string.IsNullOrEmpty(_enemyTag) || other.CompareTag(_enemyTag);
 
     bool TryHit(GameObject go)
     {
-        // Fast-path: common pattern is an EnemyHealth with Hit(float)
         var enemy = go.GetComponent<Health>();
         if (enemy != null) { enemy.Hit(_damage); return true; }
-
         return false;
     }
 }

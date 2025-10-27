@@ -43,8 +43,7 @@ public class XpLevelSystem : MonoBehaviour, IAsyncStep
     public void AwardEnemyKill()
     {
         int players = GetAlivePlayerCount();
-        //float award = (players <= 0) ? baseXpPerKill : baseXpPerKill / players;
-        float award = baseXpPerKill;
+        float award = (players <= 0) ? baseXpPerKill : baseXpPerKill / players;
         AddXp(award);
     }
 
