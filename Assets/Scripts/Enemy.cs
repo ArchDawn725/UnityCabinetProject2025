@@ -24,7 +24,7 @@ public class Enemy : MonoBehaviour
         _mover = GetComponent<NavMeshAgent>();
         _health = GetComponent<Health>();
 
-        _mover.speed *= 1f + points * 0.01f;
+        //_mover.speed *= 1f + points * 0.01f;
         _health.AddMaxHp(_health.Max * (1f + points * 0.01f));
     }
 }

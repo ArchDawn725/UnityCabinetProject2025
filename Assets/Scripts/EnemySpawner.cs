@@ -139,7 +139,7 @@ public class EnemySpawner : MonoBehaviour, IAsyncStep
             // Progress 0..1 → interval lerp (gets faster over time)
             float t = (total > 1) ? (spawned / (float)total) : 1f;
             float delay = Mathf.Lerp(initialInterval, finalInterval, t);
-            delay *= 2;
+            delay /= GetAlivePlayerCount();
 
             if (delay > 0f) yield return new WaitForSeconds(delay);
             else yield return null; // next frame
@@ -164,4 +164,12 @@ public class EnemySpawner : MonoBehaviour, IAsyncStep
             finalInterval = initialInterval; // keep "increasing speed" (non-increasing delay)
     }
 #endif
+
+    int GetAlivePlayerCount()
+    {
+        // Simple: count Player components in scene (active only)
+        // If you built a PlayerRegistry earlier, swap this for PlayerRegistry.Players.Count
+        var players = FindObjectsOfType<Player>(includeInactive: false);
+        return Mathf.Max(1, players.Length);
+    }
 }
