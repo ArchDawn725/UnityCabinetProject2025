@@ -17,9 +17,9 @@ public class EnemySpawner : MonoBehaviour, IAsyncStep
 
     [Header("Pacing")]
     [Tooltip("Seconds between the first few spawns.")]
-    [SerializeField, Min(0f)] private float initialInterval = 0.75f;
+    [SerializeField, Min(0f)] private float initialInterval = 5f;
     [Tooltip("Seconds between the last few spawns (faster = smaller).")]
-    [SerializeField, Min(0f)] private float finalInterval = 0.10f;
+    [SerializeField, Min(0f)] private float finalInterval = 1.0f;
     [Tooltip("Round-robin cycles through spawn points; otherwise use random point per enemy.")]
     [SerializeField] private bool roundRobinPoints = true;
     [Tooltip("Randomize the overall order of spawn entries.")]
@@ -36,15 +36,12 @@ public class EnemySpawner : MonoBehaviour, IAsyncStep
     private List<Transform> _activePoints = new();  // points for current room
     private int _rrIndex;                        // round-robin index
 
-    private Initializer _initializer;
-
     // ---------------- IAsyncStep ----------------
     public async Task SetupAsync(CancellationToken ct, Initializer initializer)
     {
         if (Singleton && Singleton != this) { Destroy(gameObject); return; }
         Singleton = this;
 
-        _initializer = initializer; // not strictly used here; RoomManager drives spawning
         await Task.CompletedTask;
     }
 
@@ -53,7 +50,7 @@ public class EnemySpawner : MonoBehaviour, IAsyncStep
     /// <summary>
     /// Start spawning for a room. Uses roomRoot to discover spawn points; falls back to serialized points.
     /// </summary>
-    public void StartSpawn(RoomSO room, int difficulty, Transform roomRoot = null)
+    public void StartSpawn(RoomSO room, int difficulty, Transform roomRoot)
     {
         Stop(); // stop any previous wave
         if (room == null)
@@ -120,7 +117,7 @@ public class EnemySpawner : MonoBehaviour, IAsyncStep
 
         OnWaveStarted?.Invoke();
 
-        int total = plan.Count;
+        int total = plan.Count * GetAlivePlayerCount();
         int spawned = 0;
 
         // (Optional) small delay before first spawn (e.g., intro)
@@ -134,7 +131,7 @@ public class EnemySpawner : MonoBehaviour, IAsyncStep
             // Spawn via pool + configure
             var enemy = pool.Spawn(enemyPrefab, point.position, point.rotation);
             WireHealthDeath(enemy);             // track alive/clear
-            enemy.ApplyDefinition(def, difficulty);         // set stats/skin from EnemySO
+            enemy.ApplyDefinition(def, difficulty * GetAlivePlayerCount());         // set stats/skin from EnemySO
             enemy.SendMessage("SetDifficulty", difficulty, SendMessageOptions.DontRequireReceiver);
             // If you used SetPoints(spawnIndex) previously:
             // enemy.SendMessage("SetPoints", spawned, SendMessageOptions.DontRequireReceiver);

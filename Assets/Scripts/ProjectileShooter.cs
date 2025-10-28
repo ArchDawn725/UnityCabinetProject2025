@@ -27,6 +27,7 @@ public class ProjectileShooter : MonoBehaviour
 
     const float EPS = 0.001f;
     private PoolManager poolManager;
+    private bool _initialized;
 
     void Awake()
     {
@@ -45,8 +46,11 @@ public class ProjectileShooter : MonoBehaviour
         _nextShotTime = 0f; // allow an immediate shot
     }
 
-    private void Start()
+    public void Setup()
     {
+        if (_initialized) return;
+        _initialized = true;
+
         poolManager = FindAnyObjectByType<PoolManager>();
         if (!poolManager)
         {
@@ -56,6 +60,7 @@ public class ProjectileShooter : MonoBehaviour
 
     void Update()
     {
+        if (!_initialized) return;
         PruneTargets();
 
         if (Time.time >= _nextShotTime && _targets.Count > 0)

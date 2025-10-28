@@ -30,6 +30,7 @@ public class StartScreenTest : MonoBehaviour, IAsyncStep
     public List<PlayerMovement> players = new List<PlayerMovement>();
     CinemachineTargetGroup targetGroup;
     private Initializer _initializer;
+    [SerializeField] private Button _gameOverButton;
 
     public async Task SetupAsync(CancellationToken ct, Initializer initializer)
     {
@@ -52,6 +53,8 @@ public class StartScreenTest : MonoBehaviour, IAsyncStep
         // If players already exist (e.g., spawned before this enabled), pair them now
         foreach (var pi in FindObjectsOfType<PlayerInput>()) { OnPlayerJoined(pi); Debug.Log("PI found"); }
         _initializer.Ready += OnBegin;
+        transform.GetComponent<TeamDownWatcher>().onTeamWipe.AddListener(OnTeamWipe);
+        await Awaitable.NextFrameAsync(ct);
     }
     private void OnBegin()
     {
@@ -127,6 +130,7 @@ public class StartScreenTest : MonoBehaviour, IAsyncStep
     private void ClassChosen(int player)
     {
         players[player].Setup();
+        players[player].transform.gameObject.GetComponent<ProjectileShooter>().Setup();
         SetScreens(player == 0 ? _player1Screens : _player2Screens, -1);
         _initializer?.Begin();
     }
@@ -138,8 +142,14 @@ public class StartScreenTest : MonoBehaviour, IAsyncStep
                 return; // still alive
         Gameover();
     }
-    private void Gameover()
+    public void Gameover()
     {
         SceneManager.LoadScene(0);
+    }
+    private void OnTeamWipe()
+    {
+        SetScreens(_player1Screens, _player1Screens.Length - 1);
+        Time.timeScale = 0f;
+        StartCoroutine(NextFrameSelect(_p1ES, _gameOverButton));
     }
 }

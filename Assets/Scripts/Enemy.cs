@@ -40,8 +40,8 @@ public class Enemy : PooledBehaviour
         _mover = GetComponent<EnemyChaser>();
         _health = GetComponent<Health>();
 
-        _health.SetMaxHp(so.maxHealth * (1f + difficulty * 0.01f));
-        _mover.SetSpeed(so.moveSpeed * (1f + difficulty * 0.01f));
+        _health.SetMaxHp(so.maxHealth * (1f + difficulty * 0.1f));
+        _mover.SetSpeed(so.moveSpeed * (1f + difficulty * 0.1f));
 
         // visuals, ai, etc.
     }

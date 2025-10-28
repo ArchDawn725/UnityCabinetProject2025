@@ -26,6 +26,7 @@ public class EnemyChaser : MonoBehaviour
         public Transform transform;
         public Health hp;
         public bool IsValid => transform && transform.gameObject.activeInHierarchy;
+        public bool IsReady => transform.gameObject.GetComponent<PlayerMovement>()._initialized;
     }
 
     readonly List<Target> _targets = new();
@@ -153,6 +154,7 @@ public class EnemyChaser : MonoBehaviour
         foreach (var t in _targets)
         {
             if (!t.IsValid) continue;
+            if (!t.IsReady) continue;
             float d2 = ((Vector2)t.transform.position - p).sqrMagnitude;
             if (d2 < bestSqr) { bestSqr = d2; best = t; }
         }

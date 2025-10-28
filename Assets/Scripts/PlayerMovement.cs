@@ -16,14 +16,14 @@ public sealed class PlayerMovement : MonoBehaviour
     [Header("Facing / Rotation")]
     [SerializeField] private bool _faceMoveDirection = true;      // rotate to face velocity
     [SerializeField, Min(0f)] private float _rotateSpeedDegPerSec = 720f;
-    [SerializeField] private float _facingAngleOffset = 0f;       // e.g., -90 if sprite faces up
+    [SerializeField] private float _facingAngleOffset = -90f;       // e.g., -90 if sprite faces up
 
     private Rigidbody2D _rb;
     private PlayerInput _playerInput;
     private InputAction _moveAction;
 
     private Vector2 _move;        // input vector (x,y)
-    private bool _initialized;
+    public bool _initialized;
 
     public float GetMoveSpeed() => _moveSpeed;
     public void SetMoveSpeed(float v) => _moveSpeed = Mathf.Max(0f, v);
@@ -44,24 +44,8 @@ public sealed class PlayerMovement : MonoBehaviour
         // (No drag/damping control here by request)
 
         StartScreenTest.Singleton?.players.Add(this);
-    }
-
-    /// <summary>Prepare the component. Subscribes to game ready, disables physics until then.</summary>
-    public async Task SetupAsync(CancellationToken ct)
-    {
-        if (_initialized) return;
-        _initialized = true;
-
-        _rb.bodyType = RigidbodyType2D.Kinematic; // hold until world ready
+        _rb.bodyType = RigidbodyType2D.Kinematic;
         movementEnabled = false;
-
-        if (Initializer.singleton != null)
-            Initializer.singleton.Ready += HandleReady;
-        else
-            EnableMovementNow();
-
-        if (!ct.IsCancellationRequested)
-            await Awaitable.NextFrameAsync(ct);
     }
 
     public void Setup()
@@ -69,22 +53,13 @@ public sealed class PlayerMovement : MonoBehaviour
         if (_initialized) return;
         _initialized = true;
 
-        _rb.bodyType = RigidbodyType2D.Kinematic;
-        movementEnabled = false;
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            transform.GetChild(i).gameObject.SetActive(true);
+        }
 
-        if (Initializer.singleton != null)
-            Initializer.singleton.Ready += HandleReady;
-        else
-            EnableMovementNow();
-    }
-
-    private void HandleReady()
-    {
         EnableMovementNow();
-        if (Initializer.singleton != null)
-            Initializer.singleton.Ready -= HandleReady;
     }
-
     private void EnableMovementNow()
     {
         _rb.bodyType = RigidbodyType2D.Dynamic;
@@ -108,9 +83,6 @@ public sealed class PlayerMovement : MonoBehaviour
             _moveAction.performed -= OnMove;
             _moveAction.canceled -= OnMove;
         }
-
-        if (Initializer.singleton != null)
-            Initializer.singleton.Ready -= HandleReady;
     }
 
     private void OnMove(InputAction.CallbackContext ctx)
@@ -143,14 +115,4 @@ public sealed class PlayerMovement : MonoBehaviour
             _rb.MoveRotation(newAngle);
         }
     }
-
-#if UNITY_EDITOR
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = Color.cyan;
-        Vector3 p = transform.position;
-        Gizmos.DrawLine(p + Vector3.left * 0.25f, p + Vector3.right * 0.25f);
-        Gizmos.DrawLine(p + Vector3.down * 0.25f, p + Vector3.up * 0.25f);
-    }
-#endif
 }

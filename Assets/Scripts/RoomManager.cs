@@ -33,9 +33,6 @@ public class RoomManager : MonoBehaviour, IAsyncStep
     // For UI: the last 3 options offered
     private readonly List<RoomSO> _lastOptions = new();
 
-    // Event to feed UI with options (3 by default)
-    public System.Action<List<RoomSO>> RoomOptionsReady;
-
     public async Task SetupAsync(CancellationToken ct, Initializer initializer)
     {
         _initializer = initializer;
@@ -106,12 +103,25 @@ public class RoomManager : MonoBehaviour, IAsyncStep
             .Select(e => e.so);
 
         _lastOptions.AddRange(options);
-        RoomOptionsReady?.Invoke(_lastOptions);
+
+        List<RoomTransitioner> transitioners =
+            new List<RoomTransitioner>(
+                Object.FindObjectsByType<RoomTransitioner>(
+                    FindObjectsInactive.Exclude,
+                    FindObjectsSortMode.None
+                )
+            );
+        for (int i = 0; i < transitioners.Count; i++)
+        {
+            if (transitioners[i].entered) continue;
+            transitioners[i].SetRoomNumber(i);
+        }
     }
 
     // UI/flow calls this with the chosen SO
-    public async void EnterNewRoom(RoomSO newRoom)
+    public async void EnterNewRoom(int id)
     {
+        RoomSO newRoom = _lastOptions[id];
         using var cts = new CancellationTokenSource();
         try { await EnterNewRoomAsync(newRoom, cts.Token); }
         catch (System.OperationCanceledException) { }
@@ -157,16 +167,16 @@ public class RoomManager : MonoBehaviour, IAsyncStep
         _numOfRoomsEntered++;
 
         // Start spawning enemies for this room
-        StartSpawningForRoom(_active, _numOfRoomsEntered);
+        StartSpawningForRoom(_active, _numOfRoomsEntered, _active.go.transform);
 
         // Give one frame for physics/AI to settle
         await Awaitable.NextFrameAsync(ct);
     }
 
-    private void StartSpawningForRoom(RoomEntry e, int difficulty)
+    private void StartSpawningForRoom(RoomEntry e, int difficulty, Transform room)
     {
         // Adapt to your spawner API
-        _spawner?.StartSpawn(e.so, difficulty);
+        _spawner?.StartSpawn(e.so, difficulty, room);
         // or: _spawner?.StartSpawnForRoom(e.so, e.go.transform, difficulty);
     }
 
