@@ -1,50 +1,85 @@
-// Player.cs
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    // Hook up references that upgrades will modify
-    [SerializeField] private PlayerMovement mover;     // your movement script
-    [SerializeField] private ProjectileShooter shooter;           // your shooter
-    [SerializeField] private Health health;                       // your generic health
+    // References
+    [SerializeField] private PlayerMovement mover; 
+    [SerializeField] private ProjectileShooter shooter;  
+    [SerializeField] private Health health; 
+    [SerializeField] private Revive revive;  
 
-    [Header("Tuning (percentages/amounts)")]
-    [SerializeField] private float moveSpeedPercent = 0.20f; // +20%
-    [SerializeField] private float damagePercent = 0.25f; // +25%
-    [SerializeField] private float fireRatePercent = 0.20f; // +20% faster
-    [SerializeField] private float maxHealthFlat = 20f;   // +20 max HP
+    [Header("States")]
+    public bool _initialized;
+
+    private void Awake()
+    {
+        StartScreenTest.Singleton?.players.Add(this);
+    }
+
+    public void Setup()
+    {
+        if (_initialized) return;
+        _initialized = true;
+
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            transform.GetChild(i).gameObject.SetActive(true);
+        }
+
+        revive.OnStateChanged += (reviveComp, prev, next) =>
+        {
+            if (next == LifeState.Alive)
+            {
+                Revived();
+            }
+            else if (next == LifeState.Downed)
+            {
+                Death();
+            }
+        };
+
+        mover.EnableMovementNow();
+        shooter.Setup();
+    }
 
     public void ApplyUpgrade(LevelUpUI.UpgradeChoice choice)
     {
         switch (choice)
         {
-            case LevelUpUI.UpgradeChoice.MoveSpeedUp:
-                if (mover)
-                {
-                    // assumes a public setter or method; if not, add one to your mover
-                    mover.SetMoveSpeed(mover.GetMoveSpeed() * (1f + moveSpeedPercent));
-                }
+            case LevelUpUI.UpgradeChoice.Survivor:
+                health.AddMaxHp(20);
+                health.AddHealthRegen(1);
                 break;
-
-            case LevelUpUI.UpgradeChoice.DamageUp:
-                if (shooter)
-                    shooter.SetProjectileDamage(shooter.GetProjectileDamage() * (1f + damagePercent));
+            case LevelUpUI.UpgradeChoice.Speedster:
+                mover.IncreaseMoveSpeed(2.5f);
+                revive.DecreaseReviveTime(10);
                 break;
-
-            case LevelUpUI.UpgradeChoice.FireRateUp:
-                if (shooter)
-                    shooter.SetSecondsBetweenShots(shooter.GetSecondsBetweenShots() * (1f - fireRatePercent));
+            case LevelUpUI.UpgradeChoice.Machinegunner:
+                shooter.DecreaseSecondsBetweenShots(0.1f);
+                shooter.IncreaseProjectileSpeed(5);
                 break;
-
-            case LevelUpUI.UpgradeChoice.MaxHealthUp:
-                if (health)
-                {
-                    // add these helpers to your Health class (see below)
-                    health.AddMaxHp(maxHealthFlat);
-                    health.Heal(maxHealthFlat);
-                }
+            case LevelUpUI.UpgradeChoice.HigherCaliber:
+                shooter.IncreaseDamage(5);
+                shooter.IncreasePiercing(1);
+                break;
+            case LevelUpUI.UpgradeChoice.Sniper:
+                shooter.IncreaseRange(2);
+                shooter.IncreaseProjLifetime(2.5f);
                 break;
         }
+    }
+    private void Revived()
+    {
+        Debug.Log($"{gameObject.name} has been revived!");
+        health.FullHeal();
+        mover.EnableMovementNow();
+        _initialized = true;
+    }
+
+    private void Death()
+    {
+        _initialized = false;
+        mover.DisableMovementNow();
     }
 
     private void OnDestroy()

@@ -11,7 +11,8 @@ using UnityEngine.UI;
 
 public class StartScreenTest : MonoBehaviour, IAsyncStep
 {
-    public static StartScreenTest Singleton;//for testing
+    //this script does too much, will adjust later
+    public static StartScreenTest Singleton;
 
     [Header("Player 1 UI")]
     [SerializeField] private GameObject[] _player1Screens = new GameObject[2];
@@ -27,7 +28,7 @@ public class StartScreenTest : MonoBehaviour, IAsyncStep
     [SerializeField] private MultiplayerEventSystem _p2ES;
 
     [Header("Testing")]
-    public List<PlayerMovement> players = new List<PlayerMovement>();
+    public List<Player> players = new List<Player>();
     CinemachineTargetGroup targetGroup;
     private Initializer _initializer;
     [SerializeField] private Button _gameOverButton;
@@ -46,7 +47,6 @@ public class StartScreenTest : MonoBehaviour, IAsyncStep
 
         PlayerInputManager.instance.onPlayerJoined += OnPlayerJoined;
 
-        // IMPORTANT: scope ES to each player's UI subtree
         if (_p1ES) _p1ES.playerRoot = _p1UiRoot ? _p1UiRoot.gameObject : null;
         if (_p2ES) _p2ES.playerRoot = _p2UiRoot ? _p2UiRoot.gameObject : null;
 
@@ -65,9 +65,6 @@ public class StartScreenTest : MonoBehaviour, IAsyncStep
     {
         PlayerInputManager.instance.onPlayerJoined -= OnPlayerJoined;
     }
-
-    // If you spawn players manually (PlayerInput.Instantiate), you can call this directly.
-    public void HandlePlayerJoined(PlayerInput pi) => OnPlayerJoined(pi);
 
     public void OnPlayerJoined(PlayerInput pi)
     {
@@ -130,7 +127,6 @@ public class StartScreenTest : MonoBehaviour, IAsyncStep
     private void ClassChosen(int player)
     {
         players[player].Setup();
-        players[player].transform.gameObject.GetComponent<ProjectileShooter>().Setup();
         SetScreens(player == 0 ? _player1Screens : _player2Screens, -1);
         _initializer?.Begin();
     }
@@ -144,6 +140,7 @@ public class StartScreenTest : MonoBehaviour, IAsyncStep
     }
     public void Gameover()
     {
+        Time.timeScale = 1f;
         SceneManager.LoadScene(0);
     }
     private void OnTeamWipe()

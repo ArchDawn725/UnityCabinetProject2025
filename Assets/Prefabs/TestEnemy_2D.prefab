@@ -246,9 +246,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
   maxHp: 5
-  hp: 0
+  hp: 1
   healthBar: {fileID: 4441254758411807859}
-  aimAnchor: {fileID: 0}
+  regenEnabled: 1
+  regenPerSecond: 0
+  regenDelay: 1
 --- !u!50 &6496188007530559077
 Rigidbody2D:
   serializedVersion: 5

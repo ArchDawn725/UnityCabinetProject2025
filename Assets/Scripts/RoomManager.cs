@@ -6,8 +6,8 @@ using UnityEngine;
 
 public class RoomManager : MonoBehaviour, IAsyncStep
 {
+    #region settings
     [Header("Assets & Prefabs")]
-    [SerializeField] private GameObject _roomPrefab;     // fallback if SO has no prefab
     [SerializeField] private RoomSO[] _roomSOArray;
 
     [Header("Runtime / Setup")]
@@ -16,7 +16,8 @@ public class RoomManager : MonoBehaviour, IAsyncStep
 
     [Header("Debug / Inspect")]
     [SerializeField] private List<GameObject> _rooms = new(); // instances (disabled until entered)
-    [SerializeField] private int _numOfRoomsEntered;
+    [SerializeField] private int _numOfRoomsEntered = -1;
+    [SerializeField] private int _enteredFrom;
 
     // Prepared entries (SO + instance)
     class RoomEntry { public RoomSO so; public GameObject go; public bool used; }
@@ -24,14 +25,15 @@ public class RoomManager : MonoBehaviour, IAsyncStep
     readonly List<RoomEntry> _unused = new(); // not yet entered
     RoomEntry _active;                        // current active room
 
-    // Players (we'll take up to two)
     readonly List<Transform> _players = new(2);
 
     private EnemySpawner _spawner;
     private Initializer _initializer;
 
-    // For UI: the last 3 options offered
     private readonly List<RoomSO> _lastOptions = new();
+
+    #endregion
+    #region Public
 
     public async Task SetupAsync(CancellationToken ct, Initializer initializer)
     {
@@ -47,7 +49,7 @@ public class RoomManager : MonoBehaviour, IAsyncStep
             ct.ThrowIfCancellationRequested();
 
             var so = deckSOs[i];
-            var prefab = _roomPrefab;
+            var prefab = so.roomPrefab;
 
             var go = Instantiate(prefab, transform);
             go.name = $"{so.name}_#{i}";
@@ -86,13 +88,12 @@ public class RoomManager : MonoBehaviour, IAsyncStep
     {
         GatherPlayers();
 
-        // Auto-enter the Starter if present (QoL)
+        // Auto-enter the Starter
         var starter = _unused.FirstOrDefault(e => e.so.type == RoomType.Starter);
         if (starter != null) await EnterNewRoomInternal(starter, ct);
         else if (_unused.Count > 0) await EnterNewRoomInternal(_unused[0], ct);
     }
 
-    // Call when the player finishes the current room
     public void OnRoundComplete()
     {
         _lastOptions.Clear();
@@ -104,6 +105,11 @@ public class RoomManager : MonoBehaviour, IAsyncStep
 
         _lastOptions.AddRange(options);
 
+        if (_lastOptions.Count == 0)
+        {
+            Debug.Log("You win!!!");
+        }
+
         List<RoomTransitioner> transitioners =
             new List<RoomTransitioner>(
                 Object.FindObjectsByType<RoomTransitioner>(
@@ -111,16 +117,20 @@ public class RoomManager : MonoBehaviour, IAsyncStep
                     FindObjectsSortMode.None
                 )
             );
-        for (int i = 0; i < transitioners.Count; i++)
+
+        int value = 0;
+        foreach (var door in transitioners)
         {
-            if (transitioners[i].entered) continue;
-            transitioners[i].SetRoomNumber(i);
+            if (door.roomDir == _enteredFrom) continue;
+            if (options.Count() < value + 1) break;
+            door.SetRoomNumber(value);
+            value++;
         }
     }
 
-    // UI/flow calls this with the chosen SO
-    public async void EnterNewRoom(int id)
+    public async void EnterNewRoom(int id, int enteredFromDir)
     {
+        _enteredFrom = GetNeRoomEnteredDir(enteredFromDir);
         RoomSO newRoom = _lastOptions[id];
         using var cts = new CancellationTokenSource();
         try { await EnterNewRoomAsync(newRoom, cts.Token); }
@@ -138,7 +148,24 @@ public class RoomManager : MonoBehaviour, IAsyncStep
         await EnterNewRoomInternal(pick, ct);
     }
 
-    // --------------------------------------------------------------------
+    private int GetNeRoomEnteredDir(int oldValue)
+    {
+        switch (oldValue)
+        {
+            default:
+            case 0:
+                return 2;
+            case 1:
+                return 3;
+            case 2:
+                return 0;
+            case 3:
+                return 1;
+        }
+    }
+
+    #endregion
+    #region Internal
 
     private async Task EnterNewRoomInternal(RoomEntry entry, CancellationToken ct)
     {
@@ -153,7 +180,6 @@ public class RoomManager : MonoBehaviour, IAsyncStep
             _active.go = null;
         }
 
-        // Activate new
         _active = entry;
         if (_active.go) _active.go.SetActive(true);
 
@@ -175,34 +201,18 @@ public class RoomManager : MonoBehaviour, IAsyncStep
 
     private void StartSpawningForRoom(RoomEntry e, int difficulty, Transform room)
     {
-        // Adapt to your spawner API
         _spawner?.StartSpawn(e.so, difficulty, room);
-        // or: _spawner?.StartSpawnForRoom(e.so, e.go.transform, difficulty);
     }
-
-    // --- Players ---
-
+    #endregion
+    #region Players
     private void GatherPlayers()
     {
         _players.Clear();
 
-        // Prefer PlayerRegistry (Input System) if you have it
         foreach (var pi in PlayerRegistry.Players)
         {
             if (pi && pi.transform) _players.Add(pi.transform);
             if (_players.Count == 2) break;
-        }
-
-        // Fallback: any GameObjects tagged "Player"
-        if (_players.Count < 2)
-        {
-            var tagged = GameObject.FindGameObjectsWithTag("Player");
-            foreach (var g in tagged)
-            {
-                if (g && g.transform && !_players.Contains(g.transform))
-                    _players.Add(g.transform);
-                if (_players.Count == 2) break;
-            }
         }
     }
 
@@ -237,10 +247,10 @@ public class RoomManager : MonoBehaviour, IAsyncStep
     }
 
     private static Transform FindChild(Transform parent, string name) => parent ? parent.Find(name) : null;
+    #endregion
+    #region Deck building 
 
-    // --- Deck building ---
-
-    // Build a list of RoomSOs meeting quotas: 1 Starter, 1 Shop, 1 Boss, 2 Elite, rest Standard
+    // Build a list of RoomSOs: 1 Starter, 1 Shop, 1 Boss, 2 Elite, rest Standard
     static List<RoomSO> BuildDeck(RoomSO[] all, int count)
     {
         var starters = all.Where(s => s.type == RoomType.Starter).ToList();
@@ -278,4 +288,5 @@ public class RoomManager : MonoBehaviour, IAsyncStep
         }
         return deck.Take(count).ToList();
     }
+    #endregion
 }

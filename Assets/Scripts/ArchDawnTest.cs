@@ -1,8 +1,6 @@
 using System.Threading;
 using System.Threading.Tasks;
-using UnityEditor.EditorTools;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 
 public class ArchDawnTest : MonoBehaviour, IAsyncStep
 {

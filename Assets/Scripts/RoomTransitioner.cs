@@ -3,12 +3,12 @@ using UnityEngine;
 public class RoomTransitioner : MonoBehaviour
 {
     [SerializeField] private int NewRoomNumber = -1;
+    [SerializeField] public int roomDir;
     [SerializeField] private RoomManager roomManager;
     public bool entered;
 
     private void Start()
     {
-        //roomManager = FindAnyObjectByType<RoomManager>();
         roomManager = transform.parent.parent.parent.GetComponent<RoomManager>();
     }
     public void SetRoomNumber(int val)
@@ -21,7 +21,7 @@ public class RoomTransitioner : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Player") && NewRoomNumber != -1)
         {
-            roomManager.EnterNewRoom(NewRoomNumber);
+            roomManager.EnterNewRoom(NewRoomNumber, roomDir);
         }
     }
 }

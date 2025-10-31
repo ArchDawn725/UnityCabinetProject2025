@@ -15,18 +15,10 @@ public class PoolManager : MonoBehaviour, IAsyncStep
     }
 
     [SerializeField] List<Entry> entries = new();
-    [SerializeField] Transform poolRoot; // optional; will be created if null
     readonly Dictionary<PooledBehaviour, ObjectPool<PooledBehaviour>> _pools = new();
-    Transform _root;
-
-    [ContextMenu("Force Setup")]//for testing in editor only
-    private void ForceSetup() { var _ = SetupAsync(CancellationToken.None, null); }
 
     public async Task SetupAsync(CancellationToken ct, Initializer initializer)
     {
-        _root = poolRoot ? poolRoot : new GameObject("PoolRoot").transform;
-        if (!poolRoot) _root.SetParent(transform, false);
-
         foreach (var e in entries)
         {
             if (!e.prefab || _pools.ContainsKey(e.prefab)) continue;
@@ -47,7 +39,7 @@ public class PoolManager : MonoBehaviour, IAsyncStep
         pool = new ObjectPool<PooledBehaviour>(
             createFunc: () =>
             {
-                var inst = Instantiate(prefab, _root);
+                var inst = Instantiate(prefab, transform);
                 inst.gameObject.SetActive(false);
                 inst.SetPool(pool); // back-reference
                 return inst;
@@ -62,7 +54,7 @@ public class PoolManager : MonoBehaviour, IAsyncStep
             {
                 o.OnDespawn();
                 o.gameObject.SetActive(false);
-                o.transform.SetParent(_root, false);
+                o.transform.SetParent(transform, false);
             },
             actionOnDestroy: o => Destroy(o.gameObject),
             collectionCheck: false,

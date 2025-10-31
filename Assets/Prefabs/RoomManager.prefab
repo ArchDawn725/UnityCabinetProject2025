@@ -61,3 +61,4 @@ MonoBehaviour:
   _coopSpawnSeparation: 1.5
   _rooms: []
   _numOfRoomsEntered: 0
+  _enteredFrom: 0

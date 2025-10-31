@@ -12,7 +12,7 @@ using UnityEngine.UI;
 public class LevelUpUI : MonoBehaviour, IAsyncStep
 {
     // ---- Choices ----
-    public enum UpgradeChoice { MoveSpeedUp, DamageUp, FireRateUp, MaxHealthUp }
+    public enum UpgradeChoice { Survivor, Speedster, Machinegunner, HigherCaliber, Sniper}
 
     [Serializable]
     public struct PlayerPanel
@@ -24,11 +24,11 @@ public class LevelUpUI : MonoBehaviour, IAsyncStep
 
         [Header("Options (same length arrays)")]
         public Button[] optionButtons;
-        public TextMeshProUGUI[] optionTitles;           // swap to TMP_Text if you use TextMeshPro
+        public TextMeshProUGUI[] optionTitles;       
         public TextMeshProUGUI[] optionDescriptions;
 
         [Header("Target Player")]
-        public Player player;                   // Player component this panel upgrades (can be left empty; auto-map)
+        public Player player;   
     }
 
     [Header("Panels (index 0 = P1, 1 = P2)")]
@@ -39,10 +39,10 @@ public class LevelUpUI : MonoBehaviour, IAsyncStep
     [SerializeField]
     private UpgradeChoice[] pool =
     {
-        UpgradeChoice.MoveSpeedUp,
-        UpgradeChoice.DamageUp,
-        UpgradeChoice.FireRateUp,
-        UpgradeChoice.MaxHealthUp
+        UpgradeChoice.Survivor,
+        UpgradeChoice.Speedster,
+        UpgradeChoice.Machinegunner,
+        UpgradeChoice.HigherCaliber
     };
 
     [Header("Input Maps (optional)")]
@@ -66,6 +66,7 @@ public class LevelUpUI : MonoBehaviour, IAsyncStep
 
         if (PlayerInputManager.instance)
             PlayerInputManager.instance.onPlayerJoined += OnPlayerJoined;
+        await Awaitable.NextFrameAsync(ct);
     }
 
     void OnDisable()
@@ -190,7 +191,6 @@ public class LevelUpUI : MonoBehaviour, IAsyncStep
 
             if (!active) continue;
 
-            // text
             if (i < pp.optionTitles.Length && pp.optionTitles[i])
                 pp.optionTitles[i].text = Title(choices[i]);
             if (i < pp.optionDescriptions.Length && pp.optionDescriptions[i])
@@ -266,7 +266,6 @@ public class LevelUpUI : MonoBehaviour, IAsyncStep
         {
             if (pp.root) pp.root.SetActive(false);
             CleanupPanel(pp);
-            // optional: clear per-player selection so ES doesn’t keep focus
             if (pp.eventSystem) pp.eventSystem.SetSelectedGameObject(null);
         }
 
@@ -301,19 +300,21 @@ public class LevelUpUI : MonoBehaviour, IAsyncStep
 
     string Title(UpgradeChoice c) => c switch
     {
-        UpgradeChoice.MoveSpeedUp => "Fleet Footed",
-        UpgradeChoice.DamageUp => "Sharpened Shots",
-        UpgradeChoice.FireRateUp => "Rapid Fire",
-        UpgradeChoice.MaxHealthUp => "Hardened",
+        UpgradeChoice.Survivor => "Survivor",
+        UpgradeChoice.Speedster => "Speedster",
+        UpgradeChoice.Machinegunner => "Machine gunner",
+        UpgradeChoice.HigherCaliber => "Higher caliber",
+        UpgradeChoice.Sniper => "Sniper",
         _ => c.ToString()
     };
 
     string Description(UpgradeChoice c) => c switch
     {
-        UpgradeChoice.MoveSpeedUp => "+20% movement speed",
-        UpgradeChoice.DamageUp => "+25% projectile damage",
-        UpgradeChoice.FireRateUp => "+20% fire rate",
-        UpgradeChoice.MaxHealthUp => "+20 max health",
+        UpgradeChoice.Survivor => "Increases health and health regen",
+        UpgradeChoice.Speedster => "Increases movement and revival speed",
+        UpgradeChoice.Machinegunner => "Increases fire rate and bullet speed",
+        UpgradeChoice.HigherCaliber => "Increases damage and pierce",
+        UpgradeChoice.Sniper => "Increases range and bullet life",
         _ => ""
     };
 }

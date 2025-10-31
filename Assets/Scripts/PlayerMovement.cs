@@ -1,5 +1,3 @@
-using System.Threading;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,9 +7,9 @@ using UnityEngine.InputSystem;
 public sealed class PlayerMovement : MonoBehaviour
 {
     [Header("Movement")]
-    [SerializeField, Min(0f)] private float _moveSpeed = 6f;     // target speed (X/Y)
-    [SerializeField, Min(0f)] private float _acceleration = 30f; // how fast we reach target speed
-    [SerializeField] public bool movementEnabled;                 // exposed for debugging
+    [SerializeField, Min(0f)] private float _moveSpeed = 5f;    
+    [SerializeField, Min(0f)] private float _acceleration = 30f;
+    [SerializeField] public bool movementEnabled;  
 
     [Header("Facing / Rotation")]
     [SerializeField] private bool _faceMoveDirection = true;      // rotate to face velocity
@@ -23,10 +21,8 @@ public sealed class PlayerMovement : MonoBehaviour
     private InputAction _moveAction;
 
     private Vector2 _move;        // input vector (x,y)
-    public bool _initialized;
 
-    public float GetMoveSpeed() => _moveSpeed;
-    public void SetMoveSpeed(float v) => _moveSpeed = Mathf.Max(0f, v);
+    public void IncreaseMoveSpeed(float amount) => _moveSpeed += amount;
 
     private void Awake()
     {
@@ -39,31 +35,22 @@ public sealed class PlayerMovement : MonoBehaviour
 
         // Top-down RB2D setup
         _rb.interpolation = RigidbodyInterpolation2D.Interpolate;
-        _rb.gravityScale = 0f;       // no gravity in top-down
-        _rb.freezeRotation = false;  // we rotate to face move dir
-        // (No drag/damping control here by request)
+        _rb.gravityScale = 0f;  
+        _rb.freezeRotation = false;
 
-        StartScreenTest.Singleton?.players.Add(this);
         _rb.bodyType = RigidbodyType2D.Kinematic;
         movementEnabled = false;
     }
-
-    public void Setup()
-    {
-        if (_initialized) return;
-        _initialized = true;
-
-        for (int i = 0; i < transform.childCount; i++)
-        {
-            transform.GetChild(i).gameObject.SetActive(true);
-        }
-
-        EnableMovementNow();
-    }
-    private void EnableMovementNow()
+    public void EnableMovementNow()
     {
         _rb.bodyType = RigidbodyType2D.Dynamic;
         movementEnabled = true;
+    }
+    public void DisableMovementNow()
+    {
+        movementEnabled = false;
+        _rb.bodyType = RigidbodyType2D.Kinematic;
+        _rb.linearVelocity = Vector2.zero;
     }
 
     private void OnEnable()
@@ -107,7 +94,7 @@ public sealed class PlayerMovement : MonoBehaviour
         Vector2 neededA = (target - v) / Mathf.Max(dt, 0.0001f);
         _rb.AddForce(neededA, ForceMode2D.Force);
 
-        // Face movement direction (optional)
+        // Face movement direction
         if (_faceMoveDirection && desiredVel.sqrMagnitude > 0.0004f)
         {
             float targetAngle = Mathf.Atan2(desiredVel.y, desiredVel.x) * Mathf.Rad2Deg + _facingAngleOffset;

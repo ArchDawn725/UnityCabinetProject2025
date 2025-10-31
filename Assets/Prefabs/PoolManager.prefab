@@ -67,7 +67,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawner
   pool: {fileID: 660014372438494942}
   enemyPrefab: {fileID: 5415284760979172986, guid: d020f264542a1e440a05a240eb33c28e, type: 3}
-  initialInterval: 5
-  finalInterval: 1
-  roundRobinPoints: 1
+  initialInterval: 1.75
+  finalInterval: 0.25
+  roundRobinPoints: 0
   randomizeOrder: 1

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1038544904448146448}
   - component: {fileID: 379328417998477997}
   m_Layer: 0
-  m_Name: Square
+  m_Name: Background
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -203,13 +203,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce7cdaeb68cc9d84299d3ee84dadbd76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  _moveSpeed: 6
+  _moveSpeed: 7.5
   _acceleration: 30
   movementEnabled: 0
   _faceMoveDirection: 1
   _rotateSpeedDegPerSec: 720
   _facingAngleOffset: -90
-  _initialized: 0
 --- !u!58 &4206473662768678074
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -260,13 +259,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ProjectileShooter
   detectionRadius: 10
   enemyTag: Enemy
-  secondsBetweenShots: 0.4
+  secondsBetweenShots: 0.5
   fireImmediatelyOnEnter: 1
-  muzzle: {fileID: 0}
   projectilePrefab: {fileID: 3157916186317761475, guid: 2a8442d9bc0b4704e89c872877076288, type: 3}
-  projectileSpeed: 20
+  projectileSpeed: 10
   projectileDamage: 10
   projectileLifetime: 5
+  piercing: 0
+  _targets: []
   fallbackChestHeight: 0.65
 --- !u!114 &494497211403891245
 MonoBehaviour:
@@ -280,13 +280,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 23d08c73e8622034dbaa77b05a0eeead, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
-  mover: {fileID: 0}
-  shooter: {fileID: 0}
-  health: {fileID: 0}
-  moveSpeedPercent: 0.2
-  damagePercent: 0.25
-  fireRatePercent: 0.2
-  maxHealthFlat: 20
+  mover: {fileID: 9100740091497571483}
+  shooter: {fileID: 8510299637329555594}
+  health: {fileID: 3983810693673123174}
+  revive: {fileID: 1504844683771934559}
+  _initialized: 0
 --- !u!114 &2836409181274241758
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -311,10 +309,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0670d751fa18ed24cab3b05003a0d170, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
-  maxHp: 100
-  hp: 0
+  maxHp: 30
+  hp: 30
   healthBar: {fileID: 1197274488285607297}
-  aimAnchor: {fileID: 0}
+  regenEnabled: 1
+  regenPerSecond: 1
+  regenDelay: 1
 --- !u!58 &6391996317517670584
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -364,6 +364,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   autoReviveSeconds: 60
+  State: 0
+  reviveBar: {fileID: 1197274488285607297}
 --- !u!1 &4669443826358843302
 GameObject:
   m_ObjectHideFlags: 0
@@ -375,7 +377,7 @@ GameObject:
   - component: {fileID: 7296691835763621267}
   - component: {fileID: 277495670320784461}
   m_Layer: 0
-  m_Name: Triangle
+  m_Name: PlayerImage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -465,7 +467,7 @@ GameObject:
   - component: {fileID: 1197274488285607297}
   - component: {fileID: 4744194876397692598}
   m_Layer: 0
-  m_Name: Square (1)
+  m_Name: Bar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

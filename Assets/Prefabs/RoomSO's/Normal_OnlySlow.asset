@@ -16,4 +16,4 @@ MonoBehaviour:
   roomPrefab: {fileID: 9086385879650481381, guid: b06a46ee3ce416f4999b732e56ac6324, type: 3}
   enemies:
   - enemy: {fileID: 11400000, guid: 2e2b321c02f30994abd33afcca568f93, type: 2}
-    count: 200
+    count: 50

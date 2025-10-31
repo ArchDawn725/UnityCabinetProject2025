@@ -52,7 +52,6 @@ public class Initializer : MonoBehaviour
 
     private async Task InitializeProgressBar(CancellationToken ct)
     {
-        // 1) Progress UI
         if (_loadProgressPrefab) 
         { 
             _loadProgress = Instantiate(_loadProgressPrefab);

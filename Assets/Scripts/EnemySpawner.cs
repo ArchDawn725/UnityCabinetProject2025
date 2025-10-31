@@ -8,33 +8,33 @@ using UnityEngine;
 
 public class EnemySpawner : MonoBehaviour, IAsyncStep
 {
-    // --- Singleton for easy access (as you used earlier) ---
+    #region Settings
     public static EnemySpawner Singleton { get; private set; }
 
     [Header("Pool + Enemy")]
-    [SerializeField] private PoolManager pool;       // assign in scene
-    [SerializeField] private Enemy enemyPrefab;      // pooled enemy prefab (data-driven via EnemySO)
+    [SerializeField] private PoolManager pool; 
+    [SerializeField] private Enemy enemyPrefab; 
 
     [Header("Pacing")]
     [Tooltip("Seconds between the first few spawns.")]
-    [SerializeField, Min(0f)] private float initialInterval = 5f;
+    [SerializeField, Min(0f)] private float initialInterval = 2f;
     [Tooltip("Seconds between the last few spawns (faster = smaller).")]
-    [SerializeField, Min(0f)] private float finalInterval = 1.0f;
-    [Tooltip("Round-robin cycles through spawn points; otherwise use random point per enemy.")]
-    [SerializeField] private bool roundRobinPoints = true;
+    [SerializeField, Min(0f)] private float finalInterval = 0.5f;
     [Tooltip("Randomize the overall order of spawn entries.")]
     [SerializeField] private bool randomizeOrder = false;
 
     // Events
-    public event Action<Enemy> OnEnemySpawned;   // fired as each enemy is activated
+    public event Action<Enemy> OnEnemySpawned;
     public event Action OnWaveStarted;
-    public event Action OnWaveCleared;           // fired when all room enemies are dead
+    public event Action OnWaveCleared;
 
     // Runtime state
     private Coroutine _spawnRoutine;
-    private int _alive;                          // enemies currently alive from the wave
-    private List<Transform> _activePoints = new();  // points for current room
-    private int _rrIndex;                        // round-robin index
+    private int _alive;                         
+    private List<Transform> _activePoints = new();
+
+#endregion
+    #region Externals
 
     // ---------------- IAsyncStep ----------------
     public async Task SetupAsync(CancellationToken ct, Initializer initializer)
@@ -64,18 +64,12 @@ public class EnemySpawner : MonoBehaviour, IAsyncStep
             return;
         }
 
-        // Build a flat plan (EnemySO repeated by count)
         var plan = BuildPlan(room);
 
-        // Pick spawn points from room, else fallback
         _activePoints = FindRoomSpawnPoints(roomRoot);
-        _rrIndex = 0;
 
-        // Shuffle plan if requested
         if (randomizeOrder && plan.Count > 1)
             FisherYates(plan);
-
-        // Reset counters and run
         _alive = 0;
         _spawnRoutine = StartCoroutine(SpawnRoutine(plan, difficulty));
     }
@@ -88,8 +82,9 @@ public class EnemySpawner : MonoBehaviour, IAsyncStep
             _spawnRoutine = null;
         }
     }
-
+#endregion
     // ---------------- Internals ----------------
+    #region Internals
 
     private List<EnemySO> BuildPlan(RoomSO room)
     {
@@ -117,24 +112,22 @@ public class EnemySpawner : MonoBehaviour, IAsyncStep
 
         OnWaveStarted?.Invoke();
 
-        int total = plan.Count * GetAlivePlayerCount();
+        int total = plan.Count;
         int spawned = 0;
+        XpLevelSystem.Instance.SetTotal(total);
 
-        // (Optional) small delay before first spawn (e.g., intro)
-        // yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(5); //gives time for second player to join
 
         while (spawned < total)
         {
-            var def = plan[spawned]; // EnemySO
+            var def = plan[spawned];
             var point = PickSpawnPoint();
 
             // Spawn via pool + configure
             var enemy = pool.Spawn(enemyPrefab, point.position, point.rotation);
             WireHealthDeath(enemy);             // track alive/clear
-            enemy.ApplyDefinition(def, difficulty * GetAlivePlayerCount());         // set stats/skin from EnemySO
+            enemy.ApplyDefinition(def, difficulty * GetAlivePlayerCount());
             enemy.SendMessage("SetDifficulty", difficulty, SendMessageOptions.DontRequireReceiver);
-            // If you used SetPoints(spawnIndex) previously:
-            // enemy.SendMessage("SetPoints", spawned, SendMessageOptions.DontRequireReceiver);
 
             _alive++;
             OnEnemySpawned?.Invoke(enemy);
@@ -161,17 +154,8 @@ public class EnemySpawner : MonoBehaviour, IAsyncStep
         if (_activePoints == null || _activePoints.Count == 0)
             return transform; // absolute fallback
 
-        if (roundRobinPoints)
-        {
-            var t = _activePoints[_rrIndex];
-            _rrIndex = (_rrIndex + 1) % _activePoints.Count;
-            return t;
-        }
-        else
-        {
-            int i = UnityEngine.Random.Range(0, _activePoints.Count);
-            return _activePoints[i];
-        }
+        int i = UnityEngine.Random.Range(0, _activePoints.Count);
+        return _activePoints[i];
     }
 
     private void WireHealthDeath(Enemy enemy)
@@ -228,10 +212,9 @@ public class EnemySpawner : MonoBehaviour, IAsyncStep
 
     private int GetAlivePlayerCount()
     {
-        // Prefer PlayerRegistry if you have it:
-        // return Mathf.Max(1, PlayerRegistry.Players.Count);
         var players = GameObject.FindGameObjectsWithTag("Player");
         int alive = players?.Length ?? 0;
         return Mathf.Max(1, alive);
     }
+    #endregion
 }

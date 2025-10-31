@@ -24,11 +24,7 @@ public class TeamDownWatcher : MonoBehaviour
     {
         if (players == null || players.Count == 0)
         {
-#if UNITY_2022_2_OR_NEWER
             players = Object.FindObjectsByType<Revive>(FindObjectsInactive.Exclude, FindObjectsSortMode.None).ToList();
-#else
-            players = Object.FindObjectsOfType<PlayerDownable>(includeInactive: false).ToList();
-#endif
         }
 
         foreach (var p in players)
@@ -65,7 +61,7 @@ public class TeamDownWatcher : MonoBehaviour
     IEnumerator ConfirmTeamWipe()
     {
         if (confirmNextFrame) yield return null; // ensures simultaneous downs are counted
-        // Team wipe = no one Alive (we don’t care about auto-revive timers here)
+
         if (players.All(p => p == null || p.State == LifeState.Downed))
             onTeamWipe?.Invoke();
 
