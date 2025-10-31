@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1253099595108645958}
   - component: {fileID: 8717537712832154592}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Square
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -106,7 +106,7 @@ GameObject:
   - component: {fileID: 6496188007530559077}
   - component: {fileID: 7124415392151651224}
   - component: {fileID: 5415284760979172986}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: TestEnemy_2D
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -245,10 +245,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0670d751fa18ed24cab3b05003a0d170, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Health
-  maxHp: 100
-  hp: 0
+  maxHp: 5
+  hp: 1
   healthBar: {fileID: 4441254758411807859}
-  aimAnchor: {fileID: 0}
+  regenEnabled: 1
+  regenPerSecond: 0
+  regenDelay: 1
 --- !u!50 &6496188007530559077
 Rigidbody2D:
   serializedVersion: 5
@@ -317,7 +319,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4441254758411807859}
   - component: {fileID: 158206085526808225}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Square (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

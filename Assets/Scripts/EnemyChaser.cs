@@ -15,9 +15,9 @@ public class EnemyChaser : MonoBehaviour
     [SerializeField, Min(0f)] float damage = 10f;
 
     [Header("Movement (2D)")]
-    [SerializeField] float moveSpeed = 3.5f;     // max speed
-    [SerializeField] float angularSpeed = 720f;  // deg/sec (rotate around Z)
-    [SerializeField] float acceleration = 8f;    // how fast we reach target speed
+    [SerializeField] float moveSpeed = 3.5f; 
+    [SerializeField] float angularSpeed = 720f; 
+    [SerializeField] float acceleration = 8f; 
 
     Rigidbody2D _rb;
 
@@ -26,6 +26,7 @@ public class EnemyChaser : MonoBehaviour
         public Transform transform;
         public Health hp;
         public bool IsValid => transform && transform.gameObject.activeInHierarchy;
+        public bool IsReady => transform.gameObject.GetComponent<Player>()._initialized;
     }
 
     readonly List<Target> _targets = new();
@@ -39,7 +40,6 @@ public class EnemyChaser : MonoBehaviour
         _rb.gravityScale = 0f;
         _rb.interpolation = RigidbodyInterpolation2D.Interpolate;
         _rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
-        // Ensure Dynamic body so velocity works:
         _rb.bodyType = RigidbodyType2D.Dynamic;
     }
 
@@ -153,18 +153,15 @@ public class EnemyChaser : MonoBehaviour
         foreach (var t in _targets)
         {
             if (!t.IsValid) continue;
+            if (!t.IsReady) continue;
             float d2 = ((Vector2)t.transform.position - p).sqrMagnitude;
             if (d2 < bestSqr) { bestSqr = d2; best = t; }
         }
         return best;
     }
 
-#if UNITY_EDITOR
-    void OnDrawGizmosSelected()
+    public void SetSpeed(float newSpeed)
     {
-        // Only draw attack range (no detection radius anymore)
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, attackRange);
+        moveSpeed = newSpeed;
     }
-#endif
 }

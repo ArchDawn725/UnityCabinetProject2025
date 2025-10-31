@@ -10,85 +10,47 @@ public class XpLevelSystem : MonoBehaviour, IAsyncStep
 
     [Header("UI")]
     [SerializeField] Slider xpSlider;
-    [SerializeField] bool sliderWholeNumbers = false; // set true if you want integers only
-
-    [Header("Progression")]
-    [SerializeField, Min(0f)] float startThreshold = 10f;     // first level requirement
-    [SerializeField, Min(0f)] float thresholdIncrement = 10f; // added per level
-    [SerializeField, Min(0f)] float baseXpPerKill = 2f;       // divided by player count
 
     [Header("State (read-only at runtime)")]
     [SerializeField] int level = 0;
-    [SerializeField] float xp = 0f;
+    [SerializeField] int total;
 
     public UnityEvent<int> onLevelUp; // passes new level
-
-    float _currentThreshold;
+    private Initializer initializer;
 
     public async Task SetupAsync(CancellationToken ct, Initializer initializer)
     {
         if (Instance && Instance != this) { Destroy(gameObject); return; }
         Instance = this;
 
-        _currentThreshold = Mathf.Max(0.01f, startThreshold);
-        if (xpSlider)
-        {
-            xpSlider.wholeNumbers = sliderWholeNumbers;
-            xpSlider.maxValue = _currentThreshold;
-            xpSlider.value = Mathf.Clamp(xp, 0f, _currentThreshold);
-        }
+        this.initializer = initializer;
+        initializer.Ready += OnStartUp;
+        await Awaitable.NextFrameAsync(ct);
     }
-
-    /// <summary>Called by Enemy when it dies.</summary>
     public void AwardEnemyKill()
     {
-        int players = GetAlivePlayerCount();
-        float award = (players <= 0) ? baseXpPerKill : baseXpPerKill / players;
-        AddXp(award);
+        xpSlider.value += 1;
     }
 
-    public void AddXp(float amount)
+    public void SetTotal(int newTotal)
     {
-        if (amount <= 0f) return;
-
-        xp += amount;
-
-        bool leveled = false;
-        while (xp >= _currentThreshold)
-        {
-            xp -= _currentThreshold;    // keep overflow
-            level++;
-            _currentThreshold += thresholdIncrement;
-            leveled = true;
-        }
-
-        if (xpSlider)
-        {
-            xpSlider.maxValue = _currentThreshold;
-            xpSlider.value = Mathf.Clamp(xp, 0f, _currentThreshold);
-        }
-
-        if (leveled) { onLevelUp?.Invoke(level); }
+        total = newTotal;
+        xpSlider.maxValue = newTotal;
     }
 
-    int GetAlivePlayerCount()
+    private void OnStartUp()
     {
-        // Simple: count Player components in scene (active only)
-        // If you built a PlayerRegistry earlier, swap this for PlayerRegistry.Players.Count
-        var players = FindObjectsOfType<Player>(includeInactive: false);
-        return Mathf.Max(1, players.Length);
+        EnemySpawner.Singleton.OnWaveCleared += LevelUp;
     }
 
-#if UNITY_EDITOR
-    void OnValidate()
+    private void OnDestroy()
     {
-        if (!Application.isPlaying && xpSlider)
+        if (EnemySpawner.Singleton != null)
         {
-            float previewThreshold = Mathf.Max(0.01f, startThreshold + thresholdIncrement * level);
-            xpSlider.wholeNumbers = sliderWholeNumbers;
-            xpSlider.maxValue = previewThreshold;
-            xpSlider.value = Mathf.Clamp(xp, 0f, previewThreshold);
+            EnemySpawner.Singleton.OnWaveCleared -= LevelUp;
         }
+        initializer.Ready -= OnStartUp;
     }
-#endif
+
+    public void LevelUp() {xpSlider.value = 0; onLevelUp?.Invoke(level); }
 }

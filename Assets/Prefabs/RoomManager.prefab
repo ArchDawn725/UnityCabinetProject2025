@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3372383603387262100
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8347106597288566768}
+  - component: {fileID: 8599440928978307276}
+  m_Layer: 0
+  m_Name: RoomManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8347106597288566768
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3372383603387262100}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8599440928978307276
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3372383603387262100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c19c0d882f1f82b4da182822e94e1e89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  _roomPrefab: {fileID: 9086385879650481381, guid: b06a46ee3ce416f4999b732e56ac6324, type: 3}
+  _roomSOArray:
+  - {fileID: 11400000, guid: baa73fb3df056164186020ce2bb26ad7, type: 2}
+  - {fileID: 11400000, guid: d136e56afe0642f49b147cddba920de7, type: 2}
+  - {fileID: 11400000, guid: 1706ad8453f5e5442ab8b0919825e082, type: 2}
+  - {fileID: 11400000, guid: 94e97b1e03a9cf84b8bdd70eb4748b1f, type: 2}
+  - {fileID: 11400000, guid: 495a4ff959d75984eb2efe1408ab4046, type: 2}
+  - {fileID: 11400000, guid: 350fcff83800c9048bec090db80755b5, type: 2}
+  - {fileID: 11400000, guid: 62b63dd0acab9794d9006d9e2539c496, type: 2}
+  - {fileID: 11400000, guid: e244844c533da8e47abe926e54c5fd27, type: 2}
+  - {fileID: 11400000, guid: 87c3edb5f7c6ac043805d49b98656abb, type: 2}
+  - {fileID: 11400000, guid: 13788711932c20e47af451e311b7831d, type: 2}
+  - {fileID: 11400000, guid: f1778dc4eaf139b45a0192409039d7d2, type: 2}
+  _roomCount: 10
+  _coopSpawnSeparation: 1.5
+  _rooms: []
+  _numOfRoomsEntered: 0
+  _enteredFrom: 0
