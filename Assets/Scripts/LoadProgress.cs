@@ -10,8 +10,8 @@ public class LoadProgress : MonoBehaviour, IAsyncStep
 {
     [Header("References")]
     [SerializeField] private Slider _progressBar;
-    [SerializeField] private TextMeshProUGUI _percentLabel; // optional (leave null to ignore)
-    [SerializeField] private CanvasGroup _canvasGroup;       // optional (adds fade on Show/Hide)
+    [SerializeField] private TextMeshProUGUI _percentLabel; 
+    [SerializeField] private CanvasGroup _canvasGroup;    
 
     [Header("Animation")]
     [Tooltip("Seconds to animate progress from 0 → 1. Scales by delta size.")]
@@ -24,7 +24,7 @@ public class LoadProgress : MonoBehaviour, IAsyncStep
 
     private Coroutine _progressCo;
     private Coroutine _fadeCo;
-    private float _target; // last requested progress [0..1]
+    private float _target;
 
     /// <summary>Current slider value (0..1), or 0 if missing.</summary>
     public float Value => _progressBar ? _progressBar.value : 0f;
@@ -54,6 +54,7 @@ public class LoadProgress : MonoBehaviour, IAsyncStep
         UpdateLabel(0f);
 
         Show(animated: true);
+        await Awaitable.NextFrameAsync(ct);
     }
 
     private void EnsureRefs()

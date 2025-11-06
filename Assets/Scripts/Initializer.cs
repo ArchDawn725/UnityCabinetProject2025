@@ -22,6 +22,10 @@ public class Initializer : MonoBehaviour
     private bool _initialized;
     public event Action Play;
 
+    public static Initializer singleton;
+
+    private void Awake() { singleton = this; }
+
     #endregion
 
     #region Construction
@@ -48,7 +52,6 @@ public class Initializer : MonoBehaviour
 
     private async Task InitializeProgressBar(CancellationToken ct)
     {
-        // 1) Progress UI
         if (_loadProgressPrefab) 
         { 
             _loadProgress = Instantiate(_loadProgressPrefab);
