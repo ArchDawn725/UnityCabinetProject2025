@@ -26,7 +26,7 @@ public class EnemyChaser : MonoBehaviour
         public Transform transform;
         public Health hp;
         public bool IsValid => transform && transform.gameObject.activeInHierarchy;
-        public bool IsReady => transform.gameObject.GetComponent<Player>()._initialized;
+        public bool IsReady => transform.gameObject.GetComponent<IPlayer>().Initialized;
     }
 
     readonly List<Target> _targets = new();

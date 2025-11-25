@@ -28,7 +28,7 @@ public class StartScreenTest : MonoBehaviour, IAsyncStep
     [SerializeField] private MultiplayerEventSystem _p2ES;
 
     [Header("Testing")]
-    public List<Player> players = new List<Player>();
+    public List<IPlayer> players = new List<IPlayer>();
     CinemachineTargetGroup targetGroup;
     private Initializer _initializer;
     [SerializeField] private Button _gameOverButton;
@@ -130,11 +130,11 @@ public class StartScreenTest : MonoBehaviour, IAsyncStep
         SetScreens(player == 0 ? _player1Screens : _player2Screens, -1);
         _initializer?.Begin();
     }
-    public void PlayerDeath(Player player)
+    public void PlayerDeath(IPlayer player)
     {
-        targetGroup.RemoveMember(player.transform);
+        targetGroup.RemoveMember(player.Transform);
         foreach (var p in players)
-            if (p && p.gameObject.activeInHierarchy)
+            if (p != null && p.GameObject.activeInHierarchy)
                 return; // still alive
         Gameover();
     }

@@ -29,7 +29,10 @@ public sealed class PlayerMovement : MonoBehaviour
         _rb = GetComponent<Rigidbody2D>();
         _playerInput = GetComponent<PlayerInput>();
 
-        _moveAction = _playerInput.actions?.FindAction("Move", throwIfNotFound: false);
+        if(_playerInput == null)
+            Debug.LogError($"ERROR: Player {this.gameObject.name} does not have an input controller set!");
+
+        _moveAction = _playerInput.actions.FindAction("Move", throwIfNotFound: false);
         if (_moveAction == null)
             Debug.LogWarning($"{nameof(PlayerMovement)}: Could not find an InputAction named 'Move' in the PlayerInput actions.", this);
 

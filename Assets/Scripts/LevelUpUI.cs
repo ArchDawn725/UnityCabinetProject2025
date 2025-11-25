@@ -12,7 +12,12 @@ using UnityEngine.UI;
 public class LevelUpUI : MonoBehaviour, IAsyncStep
 {
     // ---- Choices ----
-    public enum UpgradeChoice { Survivor, Speedster, Machinegunner, HigherCaliber, Sniper}
+    public enum UpgradeChoice { 
+        Survivor, Speedster, 
+        Machinegunner, HigherCaliber, Sniper,
+        Swordmaster, SweepingEdge, SharperBlade,
+        BiggerBlast, FasterBolts, StrongerBolts
+    }
 
     [Serializable]
     public struct PlayerPanel
@@ -28,7 +33,10 @@ public class LevelUpUI : MonoBehaviour, IAsyncStep
         public TextMeshProUGUI[] optionDescriptions;
 
         [Header("Target Player")]
-        public Player player;   
+        public IPlayer player;
+
+        [Header("Upgrade Pool")]
+        public UpgradeChoice[] pool;
     }
 
     [Header("Panels (index 0 = P1, 1 = P2)")]
@@ -36,14 +44,6 @@ public class LevelUpUI : MonoBehaviour, IAsyncStep
 
     [Header("Choices")]
     [SerializeField, Min(1)] private int choicesPerPlayer = 3;
-    [SerializeField]
-    private UpgradeChoice[] pool =
-    {
-        UpgradeChoice.Survivor,
-        UpgradeChoice.Speedster,
-        UpgradeChoice.Machinegunner,
-        UpgradeChoice.HigherCaliber
-    };
 
     [Header("Input Maps (optional)")]
     [SerializeField] private string gameplayMap = "Gameplay";
@@ -80,14 +80,41 @@ public class LevelUpUI : MonoBehaviour, IAsyncStep
 
     void OnPlayerJoined(PlayerInput pi)
     {
-        var p = pi.GetComponent<Player>();
-        if (!p) return;
+        var p = pi.GetComponent<IPlayer>();
+        if (p == null) return;
 
         int idx = pi.playerIndex;
         if (idx >= 0 && idx < panels.Length)
         {
             var pp = panels[idx];
             pp.player = p;
+            switch (p.PType)
+            {
+                case "Gunslinger":
+                    pp.pool = new UpgradeChoice[5];
+                    pp.pool[0] = UpgradeChoice.Survivor;
+                    pp.pool[1] = UpgradeChoice.Speedster;
+                    pp.pool[2] = UpgradeChoice.Machinegunner;
+                    pp.pool[3] = UpgradeChoice.HigherCaliber;
+                    pp.pool[4] = UpgradeChoice.Sniper;
+                    break;
+                case "Samurai":
+                    pp.pool = new UpgradeChoice[5];
+                    pp.pool[0] = UpgradeChoice.Survivor;
+                    pp.pool[1] = UpgradeChoice.Speedster;
+                    pp.pool[2] = UpgradeChoice.Swordmaster;
+                    pp.pool[3] = UpgradeChoice.SweepingEdge;
+                    pp.pool[4] = UpgradeChoice.SharperBlade;
+                    break;
+                case "Wizard":
+                    pp.pool = new UpgradeChoice[5];
+                    pp.pool[0] = UpgradeChoice.Survivor;
+                    pp.pool[1] = UpgradeChoice.Speedster;
+                    pp.pool[2] = UpgradeChoice.BiggerBlast;
+                    pp.pool[3] = UpgradeChoice.FasterBolts;
+                    pp.pool[4] = UpgradeChoice.StrongerBolts;
+                    break;
+            }
             panels[idx] = pp;
         }
 
@@ -142,7 +169,7 @@ public class LevelUpUI : MonoBehaviour, IAsyncStep
 
             _awaiting++;
 
-            var choices = RollChoices();
+            var choices = RollChoices(panelIndex);
             WirePanel(panelIndex, pp, choices);
 
             pp.root.SetActive(true);
@@ -165,7 +192,7 @@ public class LevelUpUI : MonoBehaviour, IAsyncStep
         if (pp.player != null)
         {
             try { pp.player.ApplyUpgrade(choice); }
-            catch (Exception e) { Debug.LogException(e, pp.player); }
+            catch (Exception e) { Debug.LogException(e, pp.player.GameObject); }
         }
 
         CleanupPanel(pp);
@@ -209,10 +236,11 @@ public class LevelUpUI : MonoBehaviour, IAsyncStep
 
     void EnsurePanelPlayers()
     {
-        var players = FindObjectsOfType<Player>(includeInactive: false);
+        //var players = FindObjectsOfType<IPlayer>(includeInactive: false);
+        var players = FindObjectsOfType<MonoBehaviour>(true).OfType<IPlayer>().ToArray();
         foreach (var p in players)
         {
-            var pi = p.GetComponent<PlayerInput>();
+            var pi = p.PInput;
             if (!pi) continue;
             int idx = pi.playerIndex;
             if (idx >= 0 && idx < panels.Length && panels[idx].player == null)
@@ -227,9 +255,9 @@ public class LevelUpUI : MonoBehaviour, IAsyncStep
     int PanelsWithPlayersCount() => panels.Count(x => x.player != null);
     int TargetPanelsCount() => panels.Length;
 
-    UpgradeChoice[] RollChoices()
+    UpgradeChoice[] RollChoices(int idx)
     {
-        var list = pool.ToArray();
+        var list = panels[idx].pool.ToArray();
         for (int i = 0; i < list.Length; i++)
         {
             int j = UnityEngine.Random.Range(i, list.Length);
@@ -302,9 +330,15 @@ public class LevelUpUI : MonoBehaviour, IAsyncStep
     {
         UpgradeChoice.Survivor => "Survivor",
         UpgradeChoice.Speedster => "Speedster",
-        UpgradeChoice.Machinegunner => "Machine gunner",
-        UpgradeChoice.HigherCaliber => "Higher caliber",
+        UpgradeChoice.Machinegunner => "Machine Gunner",
+        UpgradeChoice.HigherCaliber => "Higher Caliber",
         UpgradeChoice.Sniper => "Sniper",
+        UpgradeChoice.Swordmaster => "Swordmaster",
+        UpgradeChoice.SweepingEdge => "Sweeping Edge",
+        UpgradeChoice.SharperBlade => "Sharper Blade",
+        UpgradeChoice.BiggerBlast => "Bigger Blast",
+        UpgradeChoice.FasterBolts => "Faster Bolts",
+        UpgradeChoice.StrongerBolts => "Stronger Bolts",
         _ => c.ToString()
     };
 
@@ -315,6 +349,12 @@ public class LevelUpUI : MonoBehaviour, IAsyncStep
         UpgradeChoice.Machinegunner => "Increases fire rate and bullet speed",
         UpgradeChoice.HigherCaliber => "Increases damage and pierce",
         UpgradeChoice.Sniper => "Increases range and bullet life",
+        UpgradeChoice.Swordmaster => "Increases sword speed",
+        UpgradeChoice.SweepingEdge => "Increases sword slashing area",
+        UpgradeChoice.SharperBlade => "Increases sword damage",
+        UpgradeChoice.BiggerBlast => "Increases fireball blast radius and damage",
+        UpgradeChoice.FasterBolts => "Increase magic bolt speed",
+        UpgradeChoice.StrongerBolts => "Increases magic bolt damage",
         _ => ""
     };
 }

@@ -3,17 +3,17 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     // References
-    [SerializeField] private PlayerMovement mover; 
-    [SerializeField] private ProjectileShooter shooter;  
-    [SerializeField] private Health health; 
-    [SerializeField] private Revive revive;  
+    [SerializeField] private PlayerMovement mover;
+    [SerializeField] private PlayerAttackAndTarget targetting;
+    [SerializeField] private Health health;
+    [SerializeField] private Revive revive;
 
     [Header("States")]
     public bool _initialized;
 
     private void Awake()
     {
-        StartScreenTest.Singleton?.players.Add(this);
+        //StartScreenTest.Singleton?.players.Add(this);
     }
 
     public void Setup()
@@ -39,7 +39,6 @@ public class Player : MonoBehaviour
         };
 
         mover.EnableMovementNow();
-        shooter.Setup();
     }
 
     public void ApplyUpgrade(LevelUpUI.UpgradeChoice choice)
@@ -55,16 +54,16 @@ public class Player : MonoBehaviour
                 revive.DecreaseReviveTime(10);
                 break;
             case LevelUpUI.UpgradeChoice.Machinegunner:
-                shooter.DecreaseSecondsBetweenShots(0.1f);
-                shooter.IncreaseProjectileSpeed(5);
+                //shooter.DecreaseSecondsBetweenShots(0.1f);
+                //shooter.IncreaseProjectileSpeed(5);
                 break;
             case LevelUpUI.UpgradeChoice.HigherCaliber:
-                shooter.IncreaseDamage(5);
-                shooter.IncreasePiercing(1);
+                //shooter.IncreaseDamage(5);
+                //shooter.IncreasePiercing(1);
                 break;
             case LevelUpUI.UpgradeChoice.Sniper:
-                shooter.IncreaseRange(2);
-                shooter.IncreaseProjLifetime(2.5f);
+                //shooter.IncreaseRange(2);
+                //shooter.IncreaseProjLifetime(2.5f);
                 break;
         }
     }
@@ -84,6 +83,6 @@ public class Player : MonoBehaviour
 
     private void OnDestroy()
     {
-        StartScreenTest.Singleton.PlayerDeath(this);
+        //StartScreenTest.Singleton.PlayerDeath(this);
     }
 }

@@ -105,13 +105,13 @@ GameObject:
   - component: {fileID: 9100740091497571483}
   - component: {fileID: 6391996317517670584}
   - component: {fileID: 1618461644946948040}
-  - component: {fileID: 8510299637329555594}
+  - component: {fileID: 8129146558616302327}
   - component: {fileID: 4206473662768678074}
   - component: {fileID: 2836409181274241758}
   - component: {fileID: 3983810693673123174}
   - component: {fileID: 1504844683771934559}
   m_Layer: 0
-  m_Name: Player_2D
+  m_Name: Player_base
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -147,7 +147,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Player
   mover: {fileID: 9100740091497571483}
-  shooter: {fileID: 8510299637329555594}
+  targetting: {fileID: 0}
   health: {fileID: 3983810693673123174}
   revive: {fileID: 1504844683771934559}
   _initialized: 0
@@ -262,7 +262,7 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!114 &8510299637329555594
+--- !u!114 &8129146558616302327
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -271,20 +271,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 4141484331465971153}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad08ae3d81ef0914b814286089103d30, type: 3}
+  m_Script: {fileID: 11500000, guid: caab930a1f3e4634589ceb556a5a6469, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ProjectileShooter
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAttackAndTarget
+  basicAttackInterval: 0.33
+  basicAttackAutomaticFire: 1
+  classAbilityACooldownTime: 15
+  classAbilityBCooldownTime: 45
+  targettingType: 0
   detectionRadius: 10
-  enemyTag: Enemy
-  secondsBetweenShots: 0.5
-  fireImmediatelyOnEnter: 1
-  projectilePrefab: {fileID: 3157916186317761475, guid: 2a8442d9bc0b4704e89c872877076288, type: 3}
-  projectileSpeed: 10
-  projectileDamage: 10
-  projectileLifetime: 5
-  piercing: 0
-  _targets: []
-  fallbackChestHeight: 0.65
+  projectile: {fileID: 3157916186317761475, guid: 2a8442d9bc0b4704e89c872877076288, type: 3}
+  _trigger: {fileID: 4206473662768678074}
 --- !u!58 &4206473662768678074
 CircleCollider2D:
   m_ObjectHideFlags: 0
