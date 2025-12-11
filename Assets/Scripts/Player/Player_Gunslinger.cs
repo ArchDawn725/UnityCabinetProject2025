@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 public class Player_Gunslinger : MonoBehaviour, IPlayer
 {
     public PlayerMovement Movement { get; protected set; }
-    public PlayerAttackAndTarget AttackAndTargetting { get; protected set; }
+    public PlayerAttackAndTarget AttackAndTargeting { get; protected set; }
     public Health Health { get; protected set; }
     public Revive Revive { get; protected set; }
 
@@ -13,8 +13,8 @@ public class Player_Gunslinger : MonoBehaviour, IPlayer
 
     public bool Initialized { get; protected set; }
 
+    [HideInInspector] public string PType { get; } = "Gunslinger";
     [Header("Gunslinger Fields")]
-    [HideInInspector] public string PType { get; protected set; } = "Gunslinger";
     [SerializeField] private Projectile bullet;
     [SerializeField] private float bulletSpeed = 10.0f;
     [SerializeField] private float bulletDamage = 10.0f;
@@ -35,13 +35,13 @@ public class Player_Gunslinger : MonoBehaviour, IPlayer
     protected void Awake()
     {
         Movement = GetComponent<PlayerMovement>();
-        AttackAndTargetting = GetComponent<PlayerAttackAndTarget>();
+        AttackAndTargeting = GetComponent<PlayerAttackAndTarget>();
         Health = GetComponent<Health>();
         Revive = GetComponent<Revive>();
         PInput = GetComponent<PlayerInput>();
         Transform = this.transform;
         GameObject = this.gameObject;
-        baseAttackInterval = AttackAndTargetting.GetBasicAttackInterval();
+        baseAttackInterval = AttackAndTargeting.GetBasicAttackInterval();
 
         StartScreenTest.Singleton?.players.Add(this);
     }
@@ -84,17 +84,17 @@ public class Player_Gunslinger : MonoBehaviour, IPlayer
         if (spreadShotTimeRemaining > 0.0f) spreadShotTimeRemaining -= Time.deltaTime;
         if (rapidFireTimeRemaining > 0.0f) rapidFireTimeRemaining -= Time.deltaTime;
 
-        if (!(rapidFireTimeRemaining > 0.0f)) AttackAndTargetting.SetBasicAttackInterval(baseAttackInterval);
+        if (!(rapidFireTimeRemaining > 0.0f)) AttackAndTargeting.SetBasicAttackInterval(baseAttackInterval);
     }
 
     public void BasicAttack()
     {
         Debug.Log($"{this.gameObject.name}: PROC BASIC ATTACK");
-        Collider2D targetCol = AttackAndTargetting.GetClosestTarget();
+        Collider2D targetCol = AttackAndTargeting.GetClosestTarget();
         if (targetCol == null) targetCol = GetComponent<Collider2D>();
 
         Vector3 origin = transform.position;
-        Vector3 aimPoint = AttackAndTargetting.GetAimPoint(targetCol);
+        Vector3 aimPoint = AttackAndTargeting.GetAimPoint(targetCol);
 
         Vector2 dir2 = (Vector2)(aimPoint - origin);
         if (dir2.sqrMagnitude < 1e-6f)
@@ -131,9 +131,9 @@ public class Player_Gunslinger : MonoBehaviour, IPlayer
     public void ClassAbilityB()
     {
         Debug.Log($"{this.gameObject.name} PROC CLASS B");
-        baseAttackInterval = AttackAndTargetting.GetBasicAttackInterval();
+        baseAttackInterval = AttackAndTargeting.GetBasicAttackInterval();
         rapidFireTimeRemaining = rapidFireTimer;
-        AttackAndTargetting.SetBasicAttackInterval(rapidFireInterval);
+        AttackAndTargeting.SetBasicAttackInterval(rapidFireInterval);
     }
 
     public void ApplyUpgrade(LevelUpUI.UpgradeChoice choice)
@@ -149,7 +149,7 @@ public class Player_Gunslinger : MonoBehaviour, IPlayer
                 Revive.DecreaseReviveTime(10);
                 break;
             case LevelUpUI.UpgradeChoice.Machinegunner:
-                AttackAndTargetting.IncrementBasicAttackInterval(-0.05f);
+                AttackAndTargeting.IncrementBasicAttackInterval(-0.05f);
                 bulletSpeed += 5.0f; //shooter.IncreaseProjectileSpeed(5);
                 break;
             case LevelUpUI.UpgradeChoice.HigherCaliber:

@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 public interface IPlayer
 {
     PlayerMovement Movement { get; }
-    PlayerAttackAndTarget AttackAndTargetting { get; }
+    PlayerAttackAndTarget AttackAndTargeting { get; }
     Health Health { get; }
     Revive Revive { get; }
 
