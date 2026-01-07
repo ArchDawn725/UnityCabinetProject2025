@@ -5320,7 +5320,7 @@ MonoBehaviour:
     - {fileID: 1616966928628463137}
     - {fileID: 615032955488709778}
     - {fileID: 3258485416852048558}
-    player: {fileID: 0}
+    pool: 
   - root: {fileID: 3627431939896267113}
     firstSelectable: {fileID: 4077676010939069050}
     eventSystem: {fileID: 4213174218941319721}
@@ -5336,9 +5336,8 @@ MonoBehaviour:
     - {fileID: 5255160927991348574}
     - {fileID: 8110178325421192912}
     - {fileID: 1874579391369551673}
-    player: {fileID: 0}
+    pool: 
   choicesPerPlayer: 3
-  pool: 00000000010000000200000003000000
   gameplayMap: Gameplay
   uiMap: UI
   waitForAllPanelsWithPlayers: 0
@@ -5376,7 +5375,7 @@ MonoBehaviour:
       m_SingletonActionBindings: []
       m_Flags: 0
     m_Reference: {fileID: 0}
-  m_PlayerPrefab: {fileID: 4141484331465971153, guid: eb57d1190d5305d458d742469ae7f778, type: 3}
+  m_PlayerPrefab: {fileID: 4141484331465971153, guid: 091a69ae0571f5141a2c34000ad74da9, type: 3}
   m_SplitScreen: 0
   m_MaintainAspectRatioInSplitScreen: 0
   m_FixedNumberOfSplitScreens: -1

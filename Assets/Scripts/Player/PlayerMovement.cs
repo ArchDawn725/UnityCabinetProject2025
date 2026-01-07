@@ -1,3 +1,4 @@
+using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -6,10 +7,16 @@ using UnityEngine.InputSystem;
 [DisallowMultipleComponent]
 public sealed class PlayerMovement : MonoBehaviour
 {
+    private enum MovementState
+    {
+        Free, Rails, Off
+    }
+
     [Header("Movement")]
     [SerializeField, Min(0f)] private float _moveSpeed = 5f;    
     [SerializeField, Min(0f)] private float _acceleration = 30f;
-    [SerializeField] public bool movementEnabled;  
+    [SerializeField] public bool movementEnabled;
+    [SerializeField] MovementState _movementState;
 
     [Header("Facing / Rotation")]
     [SerializeField] private bool _faceMoveDirection = true;      // rotate to face velocity
@@ -20,7 +27,10 @@ public sealed class PlayerMovement : MonoBehaviour
     private PlayerInput _playerInput;
     private InputAction _moveAction;
 
+    private float moveFreeTime = 0.0f;
+
     private Vector2 _move;        // input vector (x,y)
+    private Vector2 _finalMove;   // actual movement direction
 
     public void IncreaseMoveSpeed(float amount) => _moveSpeed += amount;
 
@@ -42,18 +52,21 @@ public sealed class PlayerMovement : MonoBehaviour
         _rb.freezeRotation = false;
 
         _rb.bodyType = RigidbodyType2D.Kinematic;
-        movementEnabled = false;
+        //movementEnabled = false;
+        _movementState = MovementState.Off;
     }
     public void EnableMovementNow()
     {
         _rb.bodyType = RigidbodyType2D.Dynamic;
-        movementEnabled = true;
+        //movementEnabled = true;
+        _movementState = MovementState.Free;
     }
     public void DisableMovementNow()
     {
-        movementEnabled = false;
+        //movementEnabled = false;
         _rb.bodyType = RigidbodyType2D.Kinematic;
         _rb.linearVelocity = Vector2.zero;
+        _movementState = MovementState.Off;
     }
 
     private void OnEnable()
@@ -80,15 +93,38 @@ public sealed class PlayerMovement : MonoBehaviour
         _move = ctx.ReadValue<Vector2>(); // [-1,1] per axis typically
     }
 
+    public Vector2 GetInputDir()
+    {
+        return _move;
+    }
+
+    public void Dash(Vector2 dirMagnitude)
+    {
+        if (_movementState != MovementState.Free) return;
+
+        _movementState = MovementState.Rails;
+        _finalMove = dirMagnitude;
+        moveFreeTime = Time.time + 0.25f;
+    }
+
     private void FixedUpdate()
     {
-        if (!movementEnabled) return;
+        if (_movementState == MovementState.Off) return;
+
+        if (_movementState == MovementState.Rails)
+        {
+            if (Time.time >= moveFreeTime)
+            {
+                _movementState = MovementState.Free;
+                _finalMove = _move;
+            }
+        } else _finalMove = _move;
 
         float dt = Time.fixedDeltaTime;
         Vector2 v = _rb.linearVelocity;
 
         // Desired velocity is world-relative, no camera involvement
-        Vector2 desiredVel = _move * _moveSpeed;
+        Vector2 desiredVel = _finalMove * _moveSpeed;
 
         // Move our velocity toward the target with an acceleration budget
         Vector2 target = Vector2.MoveTowards(v, desiredVel, _acceleration * dt);
