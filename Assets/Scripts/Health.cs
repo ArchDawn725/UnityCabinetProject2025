@@ -17,6 +17,7 @@ public class Health : MonoBehaviour
     [SerializeField, Min(0f)] float regenPerSecond = 0f;     // HP per second
     [SerializeField, Min(0f)] float regenDelay = 1f;         // seconds after last damage
 
+    bool _invincible;
     float _lastDamageTime;        // time of last Hit()
     Coroutine _regenRoutine;
 
@@ -38,7 +39,7 @@ public class Health : MonoBehaviour
 
     public void Hit(float damage)
     {
-        if (damage <= 0f || hp <= 0f) return;
+        if (damage <= 0f || hp <= 0f || _invincible) return;
 
         hp = Mathf.Max(0f, hp - damage);
         _lastDamageTime = Time.time;                 // block regen until delay passes
@@ -75,6 +76,11 @@ public class Health : MonoBehaviour
     {
         maxHp = Mathf.Max(1f, val);
         FullHeal();
+    }
+
+    public void SetInvincible(bool val)
+    {
+        _invincible = val;
     }
 
     public float Current => hp;

@@ -25,6 +25,7 @@ public class Player_Samurai : MonoBehaviour, IPlayer
 
     private float ClassAHit2Time = -1.0f;
     private float ClassAHit3Time = -1.0f;
+    private float ClassBHitInterval = 0.25f;
 
     public PlayerInput PInput { get; protected set; }
 
@@ -64,13 +65,13 @@ public class Player_Samurai : MonoBehaviour, IPlayer
         
         if(ClassAHit2Time >= 0.0f && Time.time >= ClassAHit2Time)
         {
-            AttackInRadiusA();
+            AttackInRadius(5.5f);
             ClassAHit2Time = -1.0f;
         }
 
         if (ClassAHit3Time >= 0.0f && Time.time >= ClassAHit3Time)
         {
-            AttackInRadiusA();
+            AttackInRadius(5.5f);
             ClassAHit3Time = -1.0f;
         }
     }
@@ -121,19 +122,19 @@ public class Player_Samurai : MonoBehaviour, IPlayer
     public void ClassAbilityA()
     {
         Debug.Log($"{this.gameObject.name}: PROC CLASS A PSYCHE");
-        Movement.Dash(Movement.GetInputDir() * 4);
-        ClassAHit2Time = Time.time + 0.125f;
-        ClassAHit3Time = Time.time + 0.25f;
-        AttackInRadiusA();
+        Movement.Dash(Movement.GetInputDir() * 2);
+        ClassAHit2Time = Time.time + 0.25f;
+        ClassAHit3Time = Time.time + 0.50f;
+        AttackInRadius(5.5f);
     }
 
-    private void AttackInRadiusA()
+    private void AttackInRadius(float rad)
     {
         List<Collider2D> enemies;
         Collider2D[] colliders;
         colliders = Physics2D.OverlapCircleAll(
             point: (Vector2)transform.position,
-            radius: 5.5f);
+            radius: rad);
 
         enemies = colliders.Where(col => col.gameObject.tag == "Enemy").ToList();
         foreach (Collider2D col in enemies)
@@ -146,7 +147,18 @@ public class Player_Samurai : MonoBehaviour, IPlayer
 
     public void ClassAbilityB()
     {
+        StartCoroutine(ClassBHitCoroutine());
+    }
 
+    private IEnumerator ClassBHitCoroutine()
+    {
+        Health.SetInvincible(true);
+        for (int i = 0; i < 10; i++)
+        {
+            yield return new WaitForSeconds(ClassBHitInterval);
+            AttackInRadius(7.0f);
+        }
+        Health.SetInvincible(false);
     }
 
     public void ApplyUpgrade(LevelUpUI.UpgradeChoice choice)

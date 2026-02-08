@@ -26,6 +26,7 @@ public sealed class PlayerMovement : MonoBehaviour
     private Rigidbody2D _rb;
     private PlayerInput _playerInput;
     private InputAction _moveAction;
+    private Health _health;
 
     private float moveFreeTime = 0.0f;
 
@@ -38,8 +39,9 @@ public sealed class PlayerMovement : MonoBehaviour
     {
         _rb = GetComponent<Rigidbody2D>();
         _playerInput = GetComponent<PlayerInput>();
+        _health = GetComponent<Health>();
 
-        if(_playerInput == null)
+        if (_playerInput == null)
             Debug.LogError($"ERROR: Player {this.gameObject.name} does not have an input controller set!");
 
         _moveAction = _playerInput.actions.FindAction("Move", throwIfNotFound: false);
@@ -104,7 +106,8 @@ public sealed class PlayerMovement : MonoBehaviour
 
         _movementState = MovementState.Rails;
         _finalMove = dirMagnitude;
-        moveFreeTime = Time.time + 0.25f;
+        moveFreeTime = Time.time + 0.50f;
+        _health.SetInvincible(true);
     }
 
     private void FixedUpdate()
@@ -117,21 +120,29 @@ public sealed class PlayerMovement : MonoBehaviour
             {
                 _movementState = MovementState.Free;
                 _finalMove = _move;
+                _rb.linearVelocity = _rb.linearVelocity.normalized * _moveSpeed;
+                _health.SetInvincible(false);
             }
         } else _finalMove = _move;
 
         float dt = Time.fixedDeltaTime;
-        Vector2 v = _rb.linearVelocity;
+        Vector2 currentVelocity = _rb.linearVelocity;
 
         // Desired velocity is world-relative, no camera involvement
         Vector2 desiredVel = _finalMove * _moveSpeed;
 
-        // Move our velocity toward the target with an acceleration budget
-        Vector2 target = Vector2.MoveTowards(v, desiredVel, _acceleration * dt);
-
-        // Apply acceleration to reach 'target' this frame (no damping)
-        Vector2 neededA = (target - v) / Mathf.Max(dt, 0.0001f);
-        _rb.AddForce(neededA, ForceMode2D.Force);
+        if (_movementState == MovementState.Free)
+        {
+            // Accelerate towards desired velocity
+            Vector2 velDiff = desiredVel - currentVelocity;
+            Vector2 accel = Vector2.ClampMagnitude(velDiff / dt, _acceleration);
+            _rb.linearVelocity = currentVelocity + accel * dt;
+        }
+        else if (_movementState == MovementState.Rails)
+        {
+            // Move at constant speed in the dash direction
+            _rb.linearVelocity = desiredVel;
+        }
 
         // Face movement direction
         if (_faceMoveDirection && desiredVel.sqrMagnitude > 0.0004f)
