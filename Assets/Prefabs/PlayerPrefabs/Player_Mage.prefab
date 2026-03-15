@@ -100,7 +100,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3042182645173287387}
-  - component: {fileID: 1893932885662836565}
+  - component: {fileID: 654583477007425956}
   - component: {fileID: 8033832922189587439}
   - component: {fileID: 9100740091497571483}
   - component: {fileID: 6391996317517670584}
@@ -111,7 +111,7 @@ GameObject:
   - component: {fileID: 3983810693673123174}
   - component: {fileID: 1504844683771934559}
   m_Layer: 0
-  m_Name: Player_Gunslinger
+  m_Name: Player_Mage
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -134,7 +134,7 @@ Transform:
   - {fileID: 1038544904448146448}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1893932885662836565
+--- !u!114 &654583477007425956
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -143,18 +143,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 4141484331465971153}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2484817770feb0042b6d94f2b01e1e53, type: 3}
+  m_Script: {fileID: 11500000, guid: e26498f715c600f4b93a60dcf9e6331a, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Player_Gunslinger
-  bullet: {fileID: 3157916186317761475, guid: 718094d53b83e1248b0033c230e07981, type: 3}
-  bulletSpeed: 15
-  bulletDamage: 10
-  bulletLifetime: 5
-  bulletPiercing: 0
-  spreadShotTimer: 4
-  spreadShotAngle: 20
-  rapidFireTimer: 8
-  rapidFireInterval: 0.1
+  m_EditorClassIdentifier: Assembly-CSharp::Player_Mage
+  magicMissile: {fileID: 3157916186317761475, guid: 7fad756fb3e3f6241be117d7af2ae1ec, type: 3}
+  numberOfMissiles: 1
+  missileSpeed: 7.5
+  missileDamage: 20
+  missileLifetime: 5
 --- !u!114 &8033832922189587439
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -279,7 +275,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: caab930a1f3e4634589ceb556a5a6469, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAttackAndTarget
-  basicAttackInterval: 0.33
+  basicAttackInterval: 0.75
   basicAttackAutomaticFire: 1
   classAbilityACooldownTime: 15
   classAbilityBCooldownTime: 45

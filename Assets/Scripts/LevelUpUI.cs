@@ -16,7 +16,7 @@ public class LevelUpUI : MonoBehaviour, IAsyncStep
         Survivor, Speedster, 
         Machinegunner, HigherCaliber, Sniper,
         Swordmaster, SweepingEdge, SharperBlade,
-        BiggerBlast, FasterBolts, StrongerBolts
+        BiggerBlast, MoreMissiles, BetterMissiles
     }
 
     [Serializable]
@@ -106,13 +106,13 @@ public class LevelUpUI : MonoBehaviour, IAsyncStep
                     pp.pool[3] = UpgradeChoice.SweepingEdge;
                     pp.pool[4] = UpgradeChoice.SharperBlade;
                     break;
-                case "Wizard":
+                case "Mage":
                     pp.pool = new UpgradeChoice[5];
                     pp.pool[0] = UpgradeChoice.Survivor;
                     pp.pool[1] = UpgradeChoice.Speedster;
                     pp.pool[2] = UpgradeChoice.BiggerBlast;
-                    pp.pool[3] = UpgradeChoice.FasterBolts;
-                    pp.pool[4] = UpgradeChoice.StrongerBolts;
+                    pp.pool[3] = UpgradeChoice.MoreMissiles;
+                    pp.pool[4] = UpgradeChoice.BetterMissiles;
                     break;
             }
             panels[idx] = pp;
@@ -337,8 +337,8 @@ public class LevelUpUI : MonoBehaviour, IAsyncStep
         UpgradeChoice.SweepingEdge => "Sweeping Edge",
         UpgradeChoice.SharperBlade => "Sharper Blade",
         UpgradeChoice.BiggerBlast => "Bigger Blast",
-        UpgradeChoice.FasterBolts => "Faster Bolts",
-        UpgradeChoice.StrongerBolts => "Stronger Bolts",
+        UpgradeChoice.MoreMissiles => "More Missiles",
+        UpgradeChoice.BetterMissiles => "Powerful Missiles",
         _ => c.ToString()
     };
 
@@ -353,8 +353,8 @@ public class LevelUpUI : MonoBehaviour, IAsyncStep
         UpgradeChoice.SweepingEdge => "Increases sword slashing area",
         UpgradeChoice.SharperBlade => "Increases sword damage",
         UpgradeChoice.BiggerBlast => "Increases fireball blast radius and damage",
-        UpgradeChoice.FasterBolts => "Increase magic bolt speed",
-        UpgradeChoice.StrongerBolts => "Increases magic bolt damage",
+        UpgradeChoice.MoreMissiles => "Increase number of magic missiles fired",
+        UpgradeChoice.BetterMissiles => "Increases magic bolt damage and speed",
         _ => ""
     };
 }

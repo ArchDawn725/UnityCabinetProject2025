@@ -6,6 +6,7 @@ using System;
 using static UnityEditor.Experimental.GraphView.GraphView;
 using UnityEditor.EditorTools;
 using Unity.VisualScripting;
+using System.Linq;
 
 public class PlayerAttackAndTarget : MonoBehaviour
 {
@@ -179,6 +180,11 @@ public class PlayerAttackAndTarget : MonoBehaviour
         basicAttackInterval = value;
     }
 
+    public void SetRange(float value)
+    {
+        _trigger.radius = value;
+    }
+
     public Vector3 GetAimPoint(Collider2D col)
     {
         // 1) Try Health anchor on this object or its parents (handles multi-collider rigs)
@@ -232,6 +238,25 @@ public class PlayerAttackAndTarget : MonoBehaviour
             if (d2 < bestSqr) { bestSqr = d2; best = col; }
         }
         return best;
+    }
+
+    public Collider2D[] GetClosestTargets(int size)
+    {
+        if (size == 0) return null;
+
+        List<Collider2D> sortedTargets =
+            targets.OrderBy(x => Vector2.Distance(this.transform.position, x.transform.position)).ToList();
+
+        if (sortedTargets.Count == 0) return null;
+
+        int min = Math.Min(size, sortedTargets.Count);
+        Collider2D[] closestTargets = new Collider2D[min];
+        for (int i = 0; i < min; i++)
+        {
+            Debug.LogWarning(i);
+            closestTargets[i] = sortedTargets[i];
+        }
+        return closestTargets;
     }
 
     public bool IsValid(Collider2D col) =>

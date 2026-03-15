@@ -16,10 +16,11 @@ public class Player_Gunslinger : MonoBehaviour, IPlayer
     [HideInInspector] public string PType { get; } = "Gunslinger";
     [Header("Gunslinger Fields")]
     [SerializeField] private Projectile bullet;
-    [SerializeField] private float bulletSpeed = 10.0f;
+    [SerializeField] private float bulletSpeed = 15.0f;
     [SerializeField] private float bulletDamage = 10.0f;
     [SerializeField] private float bulletLifetime = 5.0f;
     [SerializeField] private int bulletPiercing = 0;
+    [SerializeField] private float bulletRange = 10.0f;
     [Space]
     [SerializeField] private float spreadShotTimer = 8.0f;
     [SerializeField] private float spreadShotAngle = 10.0f; //in degrees
@@ -36,11 +37,10 @@ public class Player_Gunslinger : MonoBehaviour, IPlayer
     {
         Movement = GetComponent<PlayerMovement>();
         AttackAndTargeting = GetComponent<PlayerAttackAndTarget>();
+        AttackAndTargeting.SetRange(bulletRange);
         Health = GetComponent<Health>();
         Revive = GetComponent<Revive>();
         PInput = GetComponent<PlayerInput>();
-        Transform = this.transform;
-        GameObject = this.gameObject;
         baseAttackInterval = AttackAndTargeting.GetBasicAttackInterval();
 
         StartScreenTest.Singleton?.players.Add(this);
@@ -150,15 +150,15 @@ public class Player_Gunslinger : MonoBehaviour, IPlayer
                 break;
             case LevelUpUI.UpgradeChoice.Machinegunner:
                 AttackAndTargeting.IncrementBasicAttackInterval(-0.05f);
-                bulletSpeed += 5.0f; //shooter.IncreaseProjectileSpeed(5);
+                bulletSpeed += 5.0f;
                 break;
             case LevelUpUI.UpgradeChoice.HigherCaliber:
-                bulletDamage += 5.0f; //shooter.IncreaseDamage(5);
-                bulletPiercing += 1; //shooter.IncreasePiercing(1);
+                bulletDamage += 5.0f;
+                bulletPiercing += 1;
                 break;
             case LevelUpUI.UpgradeChoice.Sniper:
-                //shooter.IncreaseRange(2);
-                //shooter.IncreaseProjLifetime(2.5f);
+                bulletRange += 2.5f;
+                AttackAndTargeting.SetRange(bulletRange);
                 break;
         }
     }
